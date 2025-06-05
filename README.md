@@ -3,7 +3,7 @@
 Translated by MoeLuoYu
 ## 前置要求  
 * [Node.js](https://nodejs.org/download/release/v9.11.2/) (版本9)  
-* gulp `npm install -g gulp`  
+* 使用 npm 安装 gulp `npm install -g gulp`  
 * MongoDB: [下载链接](https://www.mongodb.com/download-center/community) 和 [安装指南](https://docs.mongodb.com/manual/administration/install-community/)  
 * [ImageMagick](https://imagemagick.org/script/download.php#windows) (可选，在动画工具中生成预览动图时需要)  
 
