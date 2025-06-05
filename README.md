@@ -1,243 +1,220 @@
-# Pony Town
+# Pony Town  
+一款关于小马建设城镇的游戏  
+Translated by MoeLuoYu
+## 前置要求  
+* [Node.js](https://nodejs.org/download/release/v9.11.2/) (版本9)  
+* gulp `npm install -g gulp`  
+* MongoDB: [下载链接](https://www.mongodb.com/download-center/community) 和 [安装指南](https://docs.mongodb.com/manual/administration/install-community/)  
+* [ImageMagick](https://imagemagick.org/script/download.php#windows) (可选，在动画工具中生成预览动图时需要)  
 
-A game of ponies building a town
+## 安装  
+```bash  
+npm install  
+```  
 
-## Prerequisites
+## 数据库设置  
+- 安装MongoDB  
+- 从命令行启动`mongo` (在Windows上可能需要进入`C:\Program Files\MongoDB\Server\4.0\bin`路径来运行此命令)  
+- 输入`use your_database_name`创建数据库  
+- 输入`db.new_collection.insert({ some_key: "some_value" })`初始化数据库  
+- 输入  
+  ```javascript  
+  db.createUser(  
+    {  
+      user: "your_username",  
+      pwd: "your_password",  
+      roles: [ { role: "readWrite", db: "your_database_name" } ]  
+    }  
+  )  
+  ```  
+  创建数据库用户。  
+- 输入`quit()`退出mongo  
 
-* [Node.js](https://nodejs.org/download/release/v9.11.2/) (version 9)
-* gulp `npm install -g gulp`
-* MongoDB: [download link](https://www.mongodb.com/download-center/community) and [installation instructions](https://docs.mongodb.com/manual/administration/install-community/)
-* [ImageMagick](https://imagemagick.org/script/download.php#windows) (optional, required for generating preview gifs in animation tool)
+## 设置OAuth密钥  
+为你选择的认证平台获取OAuth密钥 (github、google、twitter、facebook、vkontakte、patreon)  
 
-## Installation
+### Github  
+- 访问https://github.com/settings/developers 创建新的OAuth应用。  
+- 将授权回调URL设置为`http://<your domain>/auth/github/callback`，对于本地服务器则设置为`http://localhost:8090/auth/github/callback`。  
+- 将以下内容添加到`config.json`的`oauth`字段中  
 
-```bash
-npm install
-```
+```json  
+"github": {  
+  "clientID": "<your_client_id>",  
+  "clientSecret": "<your_client_secret>"  
+}  
+```  
 
-## Setting up Database
+### Twitter  
+- 访问https://developer.twitter.com/en/apps 创建新应用。  
+- 将回调URL设置为`http://<your domain>/auth/twitter/callback`，对于本地服务器则设置为`http://localhost:8090/auth/twitter/callback`。  
+- 将以下内容添加到`config.json`的`oauth`字段中  
 
-- Install MongoDB
-- Start `mongo` from command line (you may need to go to `C:\Program Files\MongoDB\Server\4.0\bin` path on windows to run the command)
-- Type `use your_database_name` to create database
-- Type `db.new_collection.insert({ some_key: "some_value" })` to initialize database
-- Type
-  ```javascript
-  db.createUser(
-    {
-      user: "your_username",
-      pwd: "your_password",
-      roles: [ { role: "readWrite", db: "your_database_name" } ]
-    }
-  )
-  ```
-  to create database user.
-- Type `quit()` to exit mongo
+```json  
+"twitter": {  
+  "consumerKey": "<your_consumer_key>",  
+  "consumerSecret": "<your_consumer_secret>"  
+}  
+```  
 
-## Setting up OAuth keys
+### Google  
+- 访问https://console.developers.google.com/apis/dashboard 从顶部下拉菜单创建新项目，进入“凭据”并创建新条目。  
+- 在“授权的JavaScript来源”中添加`http://<your domain>`或本地服务器的`http://localhost:8090/`。  
+- 在“授权的重定向URI”中添加`http://<your domain>/auth/google/callback`或本地服务器的`http://localhost:8090/auth/google/callback`。  
+- 将以下内容添加到`config.json`的`oauth`字段中  
 
-Get OAuth keys for authentication platform of your choice (github, google, twitter, facebook, vkontakte, patreon)
+```json  
+"google": {  
+  "clientID": "<your_client_id>",  
+  "clientSecret": "<your_client_secret>"  
+}  
+```  
 
-### Github
+### Facebook  
+- 访问https://developers.facebook.com/apps/ 添加新应用。  
+- 为应用添加“Facebook登录”功能  
+- 启用“Web OAuth登录”  
+- 在“有效OAuth重定向URI”中添加`https://<your domain>/auth/facebook/callback`  
+- 将以下内容添加到`config.json`的`oauth`字段中（可在“设置 > 基本信息”中找到应用ID和应用密钥）  
 
-- Go to https://github.com/settings/developers create new OAuth app.
-- Set authorization callback URL to `http://<your domain>/auth/github/callback` or `http://localhost:8090/auth/github/callback` for localhost server.
-- Add this to `oauth` field in your `config.json`
+```json  
+"facebook": {  
+  "clientID": "<your_app_id>",  
+  "clientSecret": "<your_app_secret>",  
+  "graphApiVersion": "v3.1"  
+}  
+```  
 
-```json
-"github": {
-  "clientID": "<your_client_id>",
-  "clientSecret": "<your_client_secret>"
-}
-```
+### VKontakte  
+- 访问https://vk.com/apps?act=manage 创建新应用  
+- 将“授权重定向URI”设置为`http://<your domain>/auth/vkontakte/callback`，对于本地服务器则设置为`http://localhost:8090/auth/vkontakte/callback`。  
+- 将以下内容添加到`config.json`的`oauth`字段中  
 
-### Twitter
+```json  
+"vkontakte": {  
+  "clientID": "<your_app_id>",  
+  "clientSecret": "<secure_key>"  
+},  
+```  
 
-- Go to https://developer.twitter.com/en/apps create new app.
-- Set callback URL to `http://<your domain>/auth/twitter/callback` or `http://localhost:8090/auth/twitter/callback` for localhost server.
-- Add this to `oauth` field in your `config.json`
+### 其他  
+如果需要添加其他登录方式，需找到对应的[passport](http://www.passportjs.org/)插件，并在`src/ts/server/oauth.ts`中添加相关代码，同时在`config.json`中添加正确配置项。  
 
-```json
-"twitter": {
-  "consumerKey": "<your_consumer_key>",
-  "consumerSecret": "<your_consumer_secret>"
-}
-```
+## 配置  
+在根目录添加`config.json`文件，内容如下。可使用`config-template.json`作为配置模板（`config.json`文件中不要包含注释）  
 
-### Google
+```javascript  
+{  
+  "title": "Pony Town",  
+  "twitterLink": "https://twitter.com/<twitter_name>", // 可选  
+  "contactEmail": "<your_contact_email>",  
+  "port": 8090,  
+  "adminPort": 8091,  
+  "host": "http://localhost:8090/",  
+  "local": "localhost:8090",  
+  "adminLocal": "localhost:8091",  
+  "secret": "<some_random_string_here>",  
+  "token": "<some_random_string_here>",  
+  "db": "mongodb://<username>:<password>@localhost:27017/<database_name>", // 使用数据库设置时的参数  
+  "analytics": { // 可选Google分析  
+    "trackingID": "<tracking_id>"  
+  },  
+  "facebookAppId": "<facebook_id>", // 可选Facebook应用链接  
+  "assetsPath": "<path_to_graphics_assets>", // 可选，用于资源生成  
+  "oauth": {  
+    "google": {  
+      "clientID": "<CLIENT_ID_HERE>",  
+      "clientSecret": "<CLIENT_SECRET_HERE>"  
+    }  
+    // 其他OAuth配置项  
+  },  
+  "servers": [  
+    {  
+      "id": "dev",  
+      "port": 8090,  
+      "path": "/s00/ws",  
+      "local": "localhost:8090",  
+      "name": "Dev server",  
+      "desc": "Development server",  
+      "flag": "test", // 可选标志（"test"、"star"或用空格分隔的国家/地区标志列表）  
+      "flags": { // 可选功能标志  
+        "test": true, // 测试服务器  
+        "editor": true, // 游戏内编辑器  
+      },  
+      "alert": "18+", // 可选18+提醒（同时阻止未成年玩家）  
+    },  
+  ]  
+}  
+```  
 
-- Go to https://console.developers.google.com/apis/dashboard create new project from dropdown at the top, go to credentials and create new entry.
-- Add to Authorized JavaScript origins `http://<your domain>` or `http://localhost:8090/` for localhost server.
-- Add to Authorized redirect URIs `http://<your domain>/auth/google/callback` or `http://localhost:8090/auth/google/callback` for localhost server.
-- Add this to `oauth` field in your `config.json`
+## 运行  
+### 生产环境  
+```bash  
+npm run build  
+npm start  
+```  
 
-```json
-"google": {
-  "clientID": "<your_client_id>",
-  "clientSecret": "<your_client_secret>"
-}
-```
+### 添加/删除角色  
+```bash  
+node cli.js --addrole <account_id> <role>   # 角色：superadmin、admin、mod、dev  
+node cli.js --removerole <account_id> <role>  
+```  
 
-### Facebook
+设置超级管理员角色使用以下命令：  
+```bash  
+node cli.js --addrole <your_account_id> superadmin  
+```  
 
-- Go to https://developers.facebook.com/apps/ add a new app.
-- Add "Facebook Login" product to your app
-- Enable "Web OAuth Login"
-- Add `https://<your domain>/auth/facebook/callback` to Valid OAuth Redirect URIs
-- Add this to `oauth` field in your `config.json` (You can find App ID and App Secret in Settings > Basic section)
+管理面板访问地址：`<base_url>/admin/`（需要admin或superadmin角色）  
+工具面板访问地址：`<base_url>/tools/`（仅在开发模式或使用--tools标志启动时可用）  
 
-```json
-"facebook": {
-  "clientID": "<your_app_id>",
-  "clientSecret": "<your_app_secret>",
-  "graphApiVersion": "v3.1"
-}
-```
+### 多进程启动  
+```bash  
+node pony-town.js --login                    # 登录服务器  
+node pony-town.js --game main                # 游戏服务器1（'main'需与config.json中的id匹配）  
+node pony-town.js --game safe                # 游戏服务器2（'safe'需与config.json中的id匹配）  
+node pony-town.js --admin --standaloneadmin  # 管理服务器  
+```  
 
-### VKontakte
+若要在同一URL下运行，需使用http代理将游戏服务器和管理服务器的路径绑定到正确端口。  
+对于用户量较大的场景，建议为进程分配更大内存（尤其是管理和游戏进程），示例：  
+```bash  
+node --max_old_space_size=8192 pony-town.js --game main  
+```  
 
-- Go to https://vk.com/apps?act=manage and create new app
-- Set Authorized redirect URI to `http://<your domain>/auth/vkontakte/callback` or `http://localhost:8090/auth/vkontakte/callback` for localhost server.
-- Add this to `oauth` field in your `config.json`
+### 测试环境（含开发工具和开发中功能）  
+```bash  
+npm run build-beta  
+node pony-town.js --login --admin --game --tools --beta  
+```  
 
-```json
-"vkontakte": {
-  "clientID": "<your_app_id>",
-  "clientSecret": "<secure_key>"
-},
-```
+### 开发模式运行  
+```bash  
+npm run ts-watch    # 终端1  
+npm run wds         # 终端2  
+gulp dev            # 终端3  
+gulp test           # 终端4（可选）  
+```  
 
-### Other
+```bash  
+gulp dev --sprites  # 运行时生成雪碧图（使用src/ts/tools/trigger.txt触发雪碧图生成，无需重启gulp）  
+gulp dev --test     # 运行时执行测试  
+gulp dev --coverage # 运行时执行测试并生成代码覆盖率报告  
+```  
 
-If you want to add other sign-in methods you need to find appropriate [passport](http://www.passportjs.org/) package and add it in `src/ts/server/oauth.ts` and add correct entry in `config.json`.
+## 自定义  
+- `package.json` - 网站标题和描述设置  
+- `assets/images` - 徽标和团队头像  
+- `public/images` - 其他徽标  
+- `public` - 隐私政策和服务条款  
+- `favicons` - 图标  
+- `src/ts/common/constants.ts` - 全局设置  
+- `src/ts/server/maps/*` - 地图配置和设置  
+- `src/ts/server/start.ts` - 世界初始化设置  
+- `src/ts/components/services/audio.ts` - 添加/删除音轨  
+- `src/ts/client/credits` - 鸣谢和贡献者  
+- `src/style/partials/_variables.scss` - 页面样式配置  
 
-## Configuration
-
-Add `config.json` file in root directory with following content. You can use `config-template.json` as a starting point for your own config. (do not include comments in your `config.json` file)
-
-```javascript
-{
-  "title": "Pony Town",
-  "twitterLink": "https://twitter.com/<twitter_name>", // optional
-  "contactEmail": "<your_contact_email>",
-  "port": 8090,
-  "adminPort": 8091,
-  "host": "http://localhost:8090/",
-  "local": "localhost:8090",
-	"adminLocal": "localhost:8091",
-  "secret": "<some_random_string_here>",
-  "token": "<some_random_string_here>",
-  "db": "mongodb://<username>:<password>@localhost:27017/<database_name>", // use values you used when setting up database
-  "analytics": { // optional google analytics
-    "trackingID": "<tracking_id>"
-  },
-  "facebookAppId": "<facebook_id>", // optional facebook app link
-  "assetsPath": "<path_to_graphics_assets>", // optional, for asset generation
-  "oauth": {
-		"google": {
-			"clientID": "<CLIENT_ID_HERE>",
-			"clientSecret": "<CLIENT_SECRET_HERE>"
-		}
-    // other oauth entries here
-  },
-  "servers": [
-    {
-      "id": "dev",
-      "port": 8090,
-      "path": "/s00/ws",
-      "local": "localhost:8090",
-      "name": "Dev server",
-      "desc": "Development server",
-      "flag": "test", // optional flag ("test", "star" or space separated list of country flags)
-      "flags": { // optional feature flags
-        "test": true, // test server
-        "editor": true, // in-game editor
-      },
-      "alert": "18+", // optional 18+ alert (also blocks underage players)
-    },
-  ]
-}
-```
-
-## Running
-
-Production environment
-
-```bash
-npm run build
-npm start
-```
-
-Adding/removing roles
-
-```bash
-node cli.js --addrole <account_id> <role>   # roles: superadmin, admin, mod, dev 
-node cli.js --removerole <account_id> <role>
-```
-
-To setup superadmin role use following command
-
-```bash
-node cli.js --addrole <your_account_id> superadmin
-```
-
-Admin panel is accessible at `<base_url>/admin/` (requires admin or superadmin role to access)
-Tools are accessible at `<base_url>/tools/` (only available in dev mode or when started with --tools flag)
-
-Starting as multiple processes
-
-```bash
-node pony-town.js --login                    # login server
-node pony-town.js --game main                # game server 1 ('main' has to match id from config.json)
-node pony-town.js --game safe                # game server 2 ('safe' has to match id from config.json)
-node pony-town.js --admin --standaloneadmin  # admin server
-```
-
-For these to work on the same URL, paths to game servers and admin server need to be bound to correct ports, using http proxy.
-
-It is recommended to run processes with larger memory pool for large user bases (especially admin and game processes), example:
-
-```bash
-node --max_old_space_size=8192 pony-town.js --game main
-```
-
-Beta environment (with dev tools and in-development features)
-
-```bash
-npm run build-beta
-node pony-town.js --login --admin --game --tools --beta
-```
-
-Running in development
-
-```bash
-npm run ts-watch    # terminal 1
-npm run wds         # terminal 2
-gulp dev            # terminal 3
-gulp test           # terminal 4 (optional)
-```
-
-```bash
-gulp dev --sprites  # run with generation of sprite sheets (use src/ts/tools/trigger.txt to trigger sprite generation without restarting gulp)
-gulp dev --test     # run with tests
-gulp dev --coverage # run with tests and code coverage
-```
-
-## Customization
-
-- `package.json` - settings for title and description of the website
-- `assets/images` - logos and team avatars
-- `public/images` - additional logos
-- `public` - privacy policy and terms of service
-- `favicons` - icons
-- `src/ts/common/constants.ts` - global settings
-- `src/ts/server/maps/*` - maps configuration and setup
-- `src/ts/server/start.ts` - world setup
-- `src/ts/components/services/audio.ts` - adding/removing sound tracks
-- `src/ts/client/credits` - credits and contributors
-- `src/style/partials/_variables.scss` - page style configuration
-
-### Custom map introduction
-
-- `src/ts/server/start.ts:35` - adding custom map to the world
-- `src/ts/server/map/customMap.ts` - commented introduction to customizing maps
+### 自定义地图入门  
+- `src/ts/server/start.ts:35` - 向世界添加自定义地图  
+- `src/ts/server/map/customMap.ts` - 自定义地图注释指南
