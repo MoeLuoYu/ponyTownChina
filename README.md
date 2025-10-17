@@ -1,6 +1,7 @@
 # Pony Town  
 一款关于小马建设城镇的游戏  
 Translated by MoeLuoYu
+本项目未完成完全翻译，请谨慎下载
 ## 前置要求  
 * [Node.js](https://nodejs.org/download/release/v9.11.2/) (版本9)  
 * 使用 npm 安装 gulp `npm install -g gulp` `npm install --save-dev gulp`
@@ -218,3 +219,4 @@ gulp dev --coverage # 运行时执行测试并生成代码覆盖率报告
 ### 自定义地图入门  
 - `src/ts/server/start.ts:35` - 向世界添加自定义地图  
 - `src/ts/server/map/customMap.ts` - 自定义地图注释指南
+
