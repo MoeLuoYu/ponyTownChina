@@ -1,0 +1,14 @@
+.chat-box(#chatBox)
+	div(#chatBoxInput)
+		input.chat-input#chat-input(
+			#inputElement [(ngModel)]="message" (keydown)="keydown($event)" [maxlength]="maxSayLength"
+			aria-label="聊天消息")
+		.chat-box-type(#typeBox (click)="toggleChatType()")
+			| #[span(#typePrefix)][#[span.chat-box-type-name(#typeName)]]:
+		button.game-button.chat-send-button((click)="send($event)" title="发送消息" aria-label="发送消息")
+			fa-icon([icon]="sendIcon")
+
+button.game-button.chat-open-button(
+	(click)="toggle()" (mousedown)="$event.preventDefault()" [disabled]="disabled" title="切换聊天"
+	aria-label="切换消息")
+	fa-icon([icon]="commentIcon" [fixedWidth]="true")

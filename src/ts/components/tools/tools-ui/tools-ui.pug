@@ -1,0 +1,285 @@
+﻿ng-template(#modal)
+	settings-modal((close)="modalRef.hide()")
+
+.container-fluid.mt-3(*ngIf="initialized")
+	tabset(type="pills" saveActiveTab="tools-ui-main-tab")
+		tab(title="常规")
+			ng-template(tabContent)
+				.mt-2.d-flex
+					div(style="width: 300px;")
+						.mb-3
+							.form-group
+								a.btn.btn-default(routerLink="/")
+									fa-icon([icon]="homeIcon")
+
+						h3 颜色选择器
+						.mb-3
+							.form-group
+								color-picker([(color)]="color")
+							.form-group
+								color-picker([(color)]="color")
+
+						h3 复选框
+						.mb-3
+							.form-group.mb-2.d-flex.align-items-center
+								check-box([(checked)]="customOutlines")
+								check-box.ml-2([(checked)]="checked" [icon]="heartIcon")
+								check-box.ml-2([(checked)]="checked" [icon]="lockIcon" [disabled]="true")
+								label.ml-2
+									| 复选框
+									span.badge.badge-success.ml-2(*ngIf="checked") 已选中
+							.form-group
+								button.btn.btn-default(btnCheckbox [(ngModel)]="checked") 按钮复选框
+								.btn-group.ml-2(btnRadioGroup [(ngModel)]="radio")
+									button.btn.btn-default(btnRadio="a") a
+									button.btn.btn-default(btnRadio="b") b
+									button.btn.btn-default(btnRadio="c") c
+								span.ml-2 单选：{{radio}}
+
+						h3 滑块
+						.mb-3
+							.form-group
+								label
+									span#slider-label 音乐音量：
+									span.text-muted.ml-1 {{slider}}
+							.form-group
+								slider-bar([(value)]="slider" [step]="1" labelledBy="slider-label")
+							.form-group
+								slider-bar.w-75([(value)]="slider" [step]="1" [disabled]="true" label="另一个滑块")
+
+						h3 表情
+						.mb-3
+							.form-group
+								p.
+									我 #[emote-box(emote="blue_heart")] 你。 #[emote-box(emote="rock")] #[emote-box(emote="🍎")]
+										#[emote-box(emote="imp")] #[emote-box(emote="face")]
+
+						h3 自定义复选框
+						.mb-3
+							custom-checkbox([(checked)]="customChecked") 标签在这里
+							| 已选中：{{customChecked}}
+
+						h3 支持者星星
+						.mb-3
+							.form-group
+								fa-icon.supporter-1([icon]="starIcon" size="lg")
+								fa-icon.supporter-2.ml-1([icon]="starIcon" size="lg")
+								fa-icon.supporter-3.ml-1([icon]="starIcon" size="lg")
+
+						h3 外部链接
+						.mb-3
+							.form-group
+								a(href="http://google.com/") 应该在新标签页打开
+
+					.ml-5(style="width: 400px;")
+						h3 角色预览
+						.mb-3
+							character-preview([pony]="pony" name="离线小马" [tag]="selected.tag")
+
+						h3 精灵框
+						.mb-3
+							.form-group.d-flex
+								sprite-box([class.active]="spriteActive" (click)="spriteActive = !spriteActive" [sprite]="sprite" fill="red" outline="maroon" circle="gray")
+								sprite-box([class.active]="spriteActive" [sprite]="sprite" [fill]="fills" [outline]="outlines")
+							.form-group
+								color-picker([(color)]="fills[0]")
+
+						h3 下拉菜单
+						.mb-3.d-flex
+							.dropdown(dropdown [autoClose]="autoCloseDropdown")
+								button.btn.btn-default.dropdown-toggle(dropdownToggle)
+									| 点击我
+								.dropdown-menu(*dropdownMenu)
+									.dropdown-item aaa
+									.dropdown-item bbb
+									.dropdown-item ccc
+							.dropdown.ml-1(dropdown [autoClose]="autoCloseDropdown")
+								button.btn.btn-default.dropdown-toggle(dropdownToggle)
+									| 第二个
+								.dropdown-menu(*dropdownMenu)
+									.dropdown-item 111
+									.dropdown-item 222
+									.dropdown-item 333
+							.btn-group.ml-1(btnRadioGroup [(ngModel)]="autoCloseDropdown")
+								button.btn([btnRadio]="true" [btnHighlight]="autoCloseDropdown === true") true
+								button.btn([btnRadio]="false" [btnHighlight]="autoCloseDropdown === false") false
+								button.btn([btnRadio]="'outsideClick'" [btnHighlight]="autoCloseDropdown === 'outsideClick'") outsideClick
+
+						h3 标签集
+						.mb-3
+							tabset(type="pills" saveActiveTab="tools-ui-tab-active-index")
+								tab(title="A")
+									ng-template(tabContent) aaa
+								tab(title="B")
+									ng-template(tabContent) bbb
+								tab(title="C")
+									ng-template(tabContent) ccc
+								tab(title="D" [disabled]="true")
+									ng-template(tabContent) ddd
+
+					.ml-5(style="width: 400px;")
+						h3 位图框
+						.mb-3
+							bitmap-box([bitmap]="pony.cm" tool="brush" [color]="color" [width]="cmSize" [height]="cmSize")
+
+						h3 精灵集选择
+						.mb-3
+							.form-group
+								set-selection(
+									label="尾巴" [base]="baseHairColor" [set]="pony.tail" [sets]="tails"
+									[outlineHidden]="!customOutlines" (change)="changed()")
+
+		tab(title="游戏")
+			ng-template(tabContent)
+				.mt-3.d-flex
+					div(style="width: 300px")
+						h3 弹窗
+						.mb-3
+							.form-group
+								button.btn.btn-default((click)="showModal(modal)") 显示弹窗
+
+						h3 支持者星星
+						.mb-3
+							.form-group
+								custom-checkbox([(checked)]="isPartyLeader") 是队长
+							.form-group
+								party-list(style="position: absolute;")
+
+					.ml-5(style="width: 400px")
+						h3 小马信息框
+						.mb-3
+							.form-group.py-4
+								pony-box([pony]="selected")
+							.form-group.pt-3
+								.btn-group.btn-group-sm
+									button.btn([btnHighlight]="isIgnored(selected)" (click)="toggleIgnored(selected)") 忽略
+									button.btn([btnHighlight]="selected.modInfo.note" (click)="selected.modInfo.note = selected.modInfo.note ? '' : 'test'") 备注
+									button.btn([btnHighlight]="isHidden(selected)" (click)="toggleHidden(selected)") 隐藏
+									.btn-group.btn-group-sm.dropdown(dropdown)
+										button.btn.btn-default.dropdown-toggle(dropdownToggle) 禁言
+										.dropdown-menu(*dropdownMenu)
+											a.dropdown-item((click)="selected.modInfo.mute=''") 无
+											a.dropdown-item((click)="selected.modInfo.mute='perma'") 永久
+											a.dropdown-item((click)="selected.modInfo.mute='5 hours'") 定时
+									.btn-group.btn-group-sm.dropdown(dropdown)
+										button.btn.btn-default.dropdown-toggle(dropdownToggle) 影子
+										.dropdown-menu(*dropdownMenu)
+											a.dropdown-item((click)="selected.modInfo.shadow=''") 无
+											a.dropdown-item((click)="selected.modInfo.shadow='perma'") 永久
+											a.dropdown-item((click)="selected.modInfo.shadow='5 hours'") 定时
+									.btn-group.btn-group-sm.dropdown(dropdown)
+										button.btn.btn-default.dropdown-toggle(dropdownToggle) 标签：{{selected.tag || '无'}}
+										.dropdown-menu(*dropdownMenu)
+											a.dropdown-item(*ngFor="let tag of tags" (click)="selected.tag = tag") {{tag || '无'}}
+							.form-group
+								custom-checkbox([(checked)]="isFriend") 是好友
+
+						h3 头像
+						.mb-3
+							.form-group.d-flex
+								portrait-box([pony]="pal")
+								portrait-box.ml-2([pony]="pal" size="medium")
+								portrait-box.ml-2([pony]="pal" size="small")
+								portrait-box.ml-2([pony]="pal" size="small" [noBorder]="true" [flip]="true")
+
+					.ml-5(style="width: 400px")
+						h3 设置框
+						.mb-3
+							div(style="position: relative")
+								settings-box
+							canvas#canvas(width="300" height="100" style="background: #111; width: 300px; height: 100px; position: static;")
+
+						h3 页面加载器
+						.mb-3
+							.form-group
+								page-loader
+
+		tab(title="聊天记录")
+			ng-template(tabContent)
+				.mt-2
+					.bg-grass(style="width: 800px; height: 600px; position: relative;")
+						chat-log(#chatlog style="position: absolute; left: 5px; bottom: 5px; right: 5px;")
+					.mt-2
+						button.btn.btn-default((click)="addMessage(chatlog, 'some message')")
+							| 添加消息
+						button.btn.btn-default.ml-1((click)="addMessage(chatlog, 'some 🍎 message')")
+							| 添加表情消息
+						button.btn.btn-default.ml-1((click)="addWhisper(chatlog, 'some whisper message')")
+							| 添加私聊
+						button.btn.ml-1((click)="spamChat(chatlog)" [btnHighlight]="spamChatInterval")
+							| 刷屏聊天
+						slider-bar([(value)]="chatlogOpacity" style="width: 300px")
+						span {{chatlogOpacity / 100 | percent}}
+
+		tab(title="设置")
+			ng-template(tabContent)
+				.modal.show.d-block(style="margin-top: 55px")
+					.modal-dialog
+						.modal-content
+							settings-modal([focusTrap]="focusTrap")
+				button.btn.btn-default((click)="focusTrap = !focusTrap" style="position: fixed; top: 10px; right: 10px;")
+					| 切换焦点陷阱
+
+		tab(title="邀请")
+			ng-template(tabContent)
+				.modal.show.d-block(style="margin-top: 55px")
+					.modal-dialog
+						.modal-content
+							invites-modal([focusTrap]="true")
+
+		tab(title="动作")
+			ng-template(tabContent)
+				.modal.show.d-block(style="margin-top: 55px; height: calc(100% - 140px)")
+					.modal-dialog
+						.modal-content
+							actions-modal((close)="saveActions()")
+				action-bar([editable]="actionBarEditable" style="position: fixed; left: 50px; bottom: 5px;")
+				custom-checkbox([(checked)]="actionBarEditable" style="position: fixed; left: 10px; bottom: 5px;" title="可编辑")
+				color-picker([(color)]="expressionActionsColor" style="position: fixed; top: 60px; left: 10px; width: 250px; z-index: 10000;")
+
+		tab(title="摄像机角度")
+			ng-template(tabContent)
+				.mt-3.d-flex
+					div(style="width: 400px")
+						h3 摄像机角度
+						.mb-3
+							.form-group.d-flex.align-items-center
+								label.mb-0 角度：
+								slider-bar([(value)]="angle" [max]="90")
+								.text-muted(style="width: 100px") {{angle | number:'0.0-0'}} 度
+							.form-group.d-flex.align-items-center
+								label.mb-0 水平地块高度：
+								.text-muted.ml-2 {{horizontalTileHeight}} 像素
+							.form-group.d-flex.align-items-center
+								label.mb-0 垂直地块高度：
+								.text-muted.ml-2 {{verticalTileHeight}} 像素
+
+		tab(title="虚拟列表")
+			ng-template(tabContent)
+				style.
+					.list {
+						background: #eee; color: #222; width: 250px; height: 500px;
+					}
+					.list2 {
+						background: #eee; color: #222; width: 250px; max-height: 500px;
+					}
+					.item {
+						height: 42px; padding: 10px; border-bottom: solid 1px #ddd;
+					}
+				.d-flex
+					div(style="margin: 50px;")
+						virtual-list.list([itemSize]="42")
+							.item(*virtualFor="let item of virtualItems; index as i; count as c")
+								div {{item.name}} [{{i}}/{{c}}]
+
+					div(style="margin: 50px;")
+						virtual-list.list2([itemSize]="42")
+							.item(*virtualFor="let item of virtualItems2; index as i; count as c")
+								div {{item.name}} [{{i}}/{{c}}]
+								
+					div(style="margin: 50px;")
+						button.btn.btn-default((click)="virtualItems2.push({ name: '项目 ' + virtualItems2.length })") 添加
+						button.btn.btn-default.ml-1((click)="virtualItems2.pop()") 移除
+						button.btn.btn-default.ml-1((click)="virtualItems2.push(virtualItems2.shift())") 移动
+
+#range-indicator

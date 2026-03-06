@@ -1,0 +1,100 @@
+h1(focusTitle) 关于
+
+.row.text-large
+	.col-lg-7
+		p.lead.
+			一款小马建造城镇的游戏
+
+		h2 联系方式
+		p 如有任何问题，请发送邮件至 #[b {{contactEmail}}]
+
+		//- div
+			hr
+
+			h2.text-success 自定义服务器
+
+			p.
+				你可以 #[a.text-success(href="...") 下载文件] 并启动自己的 {{title}} 服务器。
+			p.
+				该软件包包含服务器文件和启动自己服务器所需步骤的说明。
+				它还允许你根据自己的喜好自定义和修改游戏。
+			p.
+				欢迎使用它为你的朋友、粉丝群体、语言群体或所有人搭建服务器。
+
+			a.d-block.mx-auto.my-4.btn.btn-lg.btn-outline-success.px-3(href="..." style="max-width: 400px;")
+				| 下载游戏文件
+
+			p.
+				构建和运行服务器所需的所有必要说明都包含在软件包中的 README.md 文件中。
+			p.
+				运行服务器需要配置和托管 Web 应用程序的基本知识，
+				不适合初学者。
+
+			hr
+
+		div(*ngIf="patreonLink")
+			h2 支持 {{title}}
+
+			p.
+				如果你想帮助 {{title}} 持续运营，并支持项目的未来发展，
+				请考虑 #[a([href]="patreonLink" target="_blank" rel="noopener noreferrer") 在 Patreon 上支持我们]。
+
+			support-button.d-block.mx-auto.my-4(style="max-width: 400px;")
+
+			p.
+				Patreon 支持者奖励包括：
+			ul
+				li(*ngFor="let r of rewards")
+					| {{r}}
+			p.
+				请注意，要获得任何 Patreon 奖励，你需要将 Patreon 连接到你的 {{title}} 账号。
+
+		h2 技术
+
+		p.
+			整个游戏使用 #[a(href="http://www.typescriptlang.org/") TypeScript] 编写，
+			这是一种编译为纯 JavaScript 的 JavaScript 类型超集。
+			服务器端代码运行在 #[a(href="https://nodejs.org/en/") Node.js]
+			服务器上，使用 WebSockets 进行通信。
+			用户界面使用 #[a(href="https://angular.io/") Angular]
+			框架构建，游戏本身使用 WebGL 渲染图形。
+
+		div(*ngIf="credits.length")
+			h2 团队
+
+			.mb-4
+				.row.team-members
+					.col-md-6(*ngFor="let c of credits")
+						.team-member
+							.team-avatar.float-left(
+								[style.background-image]="c.background"
+								[style.background-position]="c.position"
+								style="background-size: 328px 246px")
+							b.text-truncate.sno {{c.name}}
+							.text-muted {{c.title}}
+							site-links([links]="c.links")
+
+				//- small.text-muted
+					em avatars by #[a.text-muted(href="link") Name]
+
+		h2 贡献者
+
+		div(*ngFor="let g of contributors")
+			h3 {{g.group}}
+			p(*ngFor="let c of g.contributors")
+				strong {{c.name}}
+				span(*ngIf="c.links")
+					|  - 
+					site-links([links]="c.links")
+
+	.col-lg-5
+
+		h2 更新日志
+
+		div(*ngFor="let v of changelog")
+			h4 {{v.version}}
+			ul
+				li(*ngFor="let c of v.changes" [innerHTML]="c")
+
+.text-center.text-muted
+	.tinyface

@@ -1,0 +1,134 @@
+h1(focusTitle) 账号设置
+
+.row.text-large
+	.col-md-6
+		form(name="form" (submit)="submit()" style="max-width: 400px; margin-bottom: 100px")
+			.form-group
+				h3 账号详情
+			.form-group
+				label(for="account-id") 账号ID
+				input#account-id.form-control([value]="account?.id" readonly)
+			.form-group
+				label(for="account-name") 账号名称
+				input#account-name.form-control(
+					type="text" name="name" [(ngModel)]="data.name" required [maxlength]="nameMaxLength")
+				small.form-text.text-warning 此名称将对其他玩家可见
+			.form-group
+				label(for="birthdate")
+					| 出生日期
+					fa-icon.ml-1.text-danger(*ngIf="showAccountAlert" [icon]="alertIcon" title="缺少字段值")
+				date-picker([(date)]="data.birthdate")
+			.form-group(*ngIf="accountError")
+				.alert.alert-danger
+					| {{accountError}}
+			.form-group(*ngIf="accountSaved")
+				.alert.alert-success
+					| 更改已保存
+			.form-group.text-right
+				button.btn.btn-default(type="submit" [disabled]="!canSubmit" style="min-width: 100px;")
+					| 保存
+
+		div(style="margin-bottom: 100px;")
+			.form-group
+				h3 已连接的社交账号
+
+			.form-group
+				p.text-muted.
+					如果你移除社交账号，你将无法再使用它登录游戏。
+
+			.form-group
+				ul.list-unstyled
+					li.item-connected-account.d-flex.justify-content-between(*ngFor="let s of sites")
+						a([href]="s.url" target="_blank" rel="noopener noreferrer")
+							fa-icon.mr-1([icon]="icon(s.icon)" [fixedWidth]="true")
+							b #[span.sr-only {{s.icon}}] {{s.name}}
+						button.btn.btn-sm.btn-danger(*ngIf="sites.length > 1" (click)="removeSite(s)" [disabled]="removingSite")
+							| 移除
+
+			.form-group
+				p.text-danger.
+					请勿连接任何#[b 不属于你的]社交站点！
+					连接其他人的社交站点可能导致意外的账号合并，
+					并导致一个或两个账号丢失。
+				p.text-danger.
+					如果你不小心将你的账号与他人的合并，请联系我们的支持邮箱。
+				.dropdown(dropdown)
+					button.btn.btn-default.dropdown-toggle(dropdownToggle)
+						| 连接其他社交站点到此账号
+					.dropdown-menu(*dropdownMenu)
+						button.dropdown-item(*ngFor="let p of providers" (click)="connectSite(p)")
+							fa-icon.mr-1([icon]="icon(p.id)" [fixedWidth]="true")
+							| #[span.sr-only {{p.name}}] {{p.name}}
+
+			.form-group(*ngIf="mergeError")
+				.alert.alert-danger
+					| {{mergeError}}
+
+			.form-group(*ngIf="authError")
+				.alert.alert-danger
+					| {{authError}}
+
+			.form-group(*ngIf="mergedAccount")
+				.alert.alert-success
+					| 账号连接成功
+
+			.form-group(*ngIf="removedAccount")
+				.alert.alert-success
+					| 账号移除成功
+
+	.col-md-6
+		div(style="margin-bottom: 100px;")
+			.clearfix(*ngIf="showSupporter")
+				.form-group
+					h3
+						fa-icon.mr-2([icon]="starIcon" [ngClass]="supporterClass")
+						| 感谢你的支持
+
+				supporter-pony.float-right(#pony (mouseenter)="pony.excite()" (mouseleave)="pony.reset()")
+
+				.form-group
+					p 你的奖励等级：#[b {{supporterTitle}}]
+					p 你的奖励包括：
+					ul
+						li(*ngFor="let r of supporterRewards")
+							| {{r}}
+
+				p(*ngIf="supporter > 0")
+					| 使用 <code>/ss 你好</code> 命令来使用支持者聊天颜色。
+
+				p(*ngIf="supporter > 1")
+					| 使用 <code>/s1 你好</code> 和 <code>/s2 你好</code> 命令来使用低等级支持者聊天颜色。
+
+			.clearfix(*ngIf="showSupporterInfo")
+				.form-group
+					h3 支持者信息
+
+				supporter-pony.float-right(#pony (mouseenter)="pony.excite()" (mouseleave)="pony.reset()")
+
+				.form-group.text-muted
+					p.
+						你已成功将 Patreon 账号连接到小马小镇。
+						如果你在 Patreon 上支持小马小镇，你的支持者信息将在此显示。
+					p.
+						注册你的 Patreon 赞助应该不超过 10 分钟。
+
+		div(style="margin-bottom: 100px;")
+			.form-group
+				.float-right
+					span.text-muted 页：{{page + 1}}
+					button.btn.btn-sm.btn-outline-secondary.ml-2((click)="page = page - 1; pageChanged()" [disabled]="!hides || page === 0")
+						| 上一页
+					button.btn.btn-sm.btn-outline-secondary.ml-1((click)="page = page + 1; pageChanged()" [disabled]="!hides || hides.length < hidesPerPage")
+						| 下一页
+				h3 已隐藏的玩家
+
+			div(*ngIf="!hides")
+				.text-muted.text-center.p-4 加载中...
+
+			ul.list-unstyled(*ngIf="hides")
+				.text-muted.text-center.p-4(*ngIf="!hides.length") 没有隐藏的玩家
+				li.item-connected-account.d-flex.align-items-center(*ngFor="let h of hides")
+					b.flex-grow-1 {{h.name}}
+					span.text-muted.mr-2 隐藏于 {{h.date}}
+					button.btn.btn-sm.btn-danger((click)="unhidePlayer(h)")
+						| 取消隐藏

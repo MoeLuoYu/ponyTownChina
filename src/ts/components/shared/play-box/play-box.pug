@@ -1,0 +1,119 @@
+.form-group(*ngIf="hasTooManyPonies")
+	.alert.alert-warning(role="alert")
+		| 你的小马数量超过限制（{{characterLimit}}个），多余的小马可能会被删除。
+		| 请删除一些不使用的小马，以防止丢失你想要保留的角色。
+
+.form-group(*ngIf="isMarkedForMultiples")
+	.alert.alert-warning(role="alert")
+		| 你的账号已被标记为创建多个账号。
+		| 继续创建更多账号可能会导致永久封禁。
+
+.form-group(*ngIf="accountAlert")
+	.alert.alert-warning(role="alert")
+		| {{accountAlert}}
+
+.form-group(*ngIf="leftMessage")
+	.alert.alert-warning(role="alert")
+		| {{leftMessage}}
+
+.form-group(*ngIf="isAndroidBrowser")
+	.alert.alert-warning(role="alert")
+		| 你的浏览器版本过旧，无法正常运行小马小镇。
+		| 请安装其他浏览器以进行游戏。
+
+.form-group(*ngIf="model.missingBirthdate && !birthdateSet && requestBirthdate")
+	.alert.alert-warning.text-left(role="alert")
+		label(for="birthdate")
+			| 设置你的出生日期
+		date-picker([(date)]="birthdate")
+		.mt-2.text-right
+			button.btn.btn-default.px-4((click)="saveBirthdate()") 保存
+		p.mb-0.mt-2
+			| 请填写你的#[b 出生日期]，以便在未来的更新中不会失去游戏访问权限。
+
+.form-group.dropdown(dropdown)
+	.btn-group.d-flex
+		button.btn.btn-lg.btn-success.text-ellipsis.flex-grow-1(
+			#playButton (click)="joining ? cancel() : play()" [disabled]="!canPlay && !joining")
+			div(*ngIf="joining")
+				fa-icon.mr-1([icon]="spinnerIcon" [spin]="true")
+				| 取消
+			div(*ngIf="!joining && server")
+				| #[strong {{label || '开始游戏'}}] #[span 在 {{server.name}}]
+			.text-faded(*ngIf="!joining && !server")
+				| 选择服务器进行游戏
+		button.btn.btn-lg.btn-success.flex-grow-0.dropdown-toggle(
+			dropdownToggle aria-label="选择服务器" [disabled]="joining" style="position: relative")
+
+	.dropdown-menu.w-100(*dropdownMenu style="overflow: hidden")
+		button.dropdown-item(*ngFor="let s of servers" (click)="server = s; playButton.focus()")
+			div
+				.float-right(style="position: relative;")
+					.text-unsafe(*ngIf="s.offline") #[span.sr-only 服务器] 离线
+					.text-muted(*ngIf="!s.offline") 在线 #[span.sr-only 玩家] ({{s.online}})
+				.flag.mr-2(*ngFor="let f of s.countryFlags" [ngClass]="'flag-' + f")
+				fa-icon.text-muted.mr-2(*ngIf="!hasFlag(s)" [icon]="getIcon(s)" size="lg")
+				strong {{s.name}}
+			.text-muted.text-wrap {{s.desc}}
+
+.form-group.text-left.text-muted.server-alert(*ngIf="server?.alert === '18+'")
+	fa-icon.float-left.p-2([icon]="warningIcon" size="2x")
+	| 在此服务器上游戏即表示你确认自己已年满18岁，并且对成人话题没有异议。
+
+.form-group.text-left.text-info.server-alert(*ngIf="server?.alert === 'test'")
+	fa-icon.float-left.p-2([icon]="infoIcon" size="2x")
+	| 支持者测试服务器：在这里你可以尝试我们正在开发的实验性和未完成的功能。
+	| 请记住，所有内容都可能会更改。
+
+.form-group(*ngIf="server?.offline")
+	.alert.alert-info(role="alert")
+		| 所选服务器离线，请稍后再试
+
+.form-group(*ngIf="offline")
+	.alert.alert-info(role="alert")
+		| 服务器离线，请稍后再试
+
+.form-group(*ngIf="protectionError && !offline")
+	.alert.alert-info(role="alert")
+		| Cloudflare 错误，#[button.btn.btn-sm.btn-outline-default((click)="reload()") 重新加载] 以继续。
+
+.form-group(*ngIf="updateWarning")
+	.alert.alert-warning(role="alert")
+		| 服务器即将重启进行更新和维护。
+		| 请保存你的角色以避免丢失进度。
+
+.form-group(*ngIf="isBrowserOutdated")
+	.alert.alert-warning(role="alert")
+		button.close.float-right((click)="dismissOutdatedBrowser()" aria-label="关闭" style="font-size: 20px;") &times;
+		| 你的浏览器版本过旧，已知在运行小马小镇时会有问题。
+		| 请确保已安装最新版本。
+
+.form-group(*ngIf="invalidVersion && !offline")
+	.alert.alert-danger(role="alert")
+		| 你的客户端版本过旧，#[button.btn.btn-sm.btn-outline-default((click)="reload()") 重新加载] 以进行游戏。
+
+.form-group(*ngIf="isAccessError")
+	.alert.alert-danger(role="alert")
+		| 你已退出登录，#[button.btn.btn-sm.btn-outline-default((click)="reload()") 重新加载] 以重新登录。
+
+.form-group(*ngIf="failedToLoadImages")
+	.alert.alert-danger(role="alert")
+		| 加载游戏资源失败，#[button.btn.btn-sm.btn-outline-default((click)="hardReload()") 重新加载] 以重试。
+
+.form-group(*ngIf="isWebGLError")
+	.alert.alert-danger(role="alert")
+		| 无法创建 WebGL 上下文。你的显卡驱动或浏览器版本过旧，或图形加速已禁用。
+		| 请访问 #[a.alert-link(href="http://webglreport.com/" tabindex) WebGL Report] 检查浏览器的 WebGL 支持。
+
+.form-group(*ngIf="isBrowserError")
+	.alert.alert-danger(role="alert")
+		| 你的浏览器版本过旧，请确保已安装最新版本。
+
+.form-group(*ngIf="isOtherError")
+	.alert.alert-danger(role="alert")
+		| {{error}}
+
+.form-group.text-left.text-large(*ngIf="server")
+	h5 服务器规则
+	p.text-muted.list-rules
+		| {{server.desc}}

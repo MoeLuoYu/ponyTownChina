@@ -1,0 +1,284 @@
+h1(focusTitle) 帮助
+
+.row.text-large
+	.col-md-7
+	
+		section
+			h2 联系方式
+			p 如有任何问题，请发送邮件至 #[b {{contactEmail}}]
+
+		section
+			h2 控制
+
+			ul.spaced-list
+				li
+					b 移动
+					.pl-2.mb-1.
+						使用
+						#[kbd-key(title="上方向键"): fa-icon([icon]="upIcon")]
+						#[kbd-key(title="左方向键"): fa-icon([icon]="leftIcon")]
+						#[kbd-key(title="下方向键"): fa-icon([icon]="downIcon")]
+						#[kbd-key(title="右方向键"): fa-icon([icon]="rightIcon")]
+						,
+						#[kbd-key(title="W键") W]
+						#[kbd-key(title="A键") A]
+						#[kbd-key(title="S键") S]
+						#[kbd-key(title="D键") D]
+						,
+						#[kbd-key.gamepad.gamepad-stick(title="手柄左摇杆") L#[.t]#[.l]#[.r]#[.b]]
+						或 #[b 触摸并拖动] 来移动。
+						#[br]
+						按住 #[kbd-key(title="shift键") shift] 慢走。
+				li
+					b 聊天
+					.pl-2.mb-1.
+						使用 #[kbd-key(title="回车键") 回车]
+						或 #[kbd-key.gamepad.gamepad-blue(title="手柄X按钮") X]
+						打开聊天框并发送消息。
+						#[br]
+						使用 #[kbd-key(title="ESC键") ESC]
+						或 #[kbd-key.gamepad.gamepad-blue(title="手柄X按钮") X]
+						取消消息。
+				li.
+					按住 #[kbd-key(title="shift键") shift] 可以点击地面和其他玩家身后的物品
+				li.
+					#[b 蹭蹭] - 
+					#[kbd-key(title="B键") B] ,
+					#[kbd-key.gamepad.gamepad-red(title="手柄B按钮") B] ,
+					#[b 双指点击]
+					或 #[code /boop] 命令
+				li.
+					#[b 互动] 或 #[b 使用物品] - #[kbd-key(title="E键") E] 或
+					#[kbd-key.gamepad.gamepad-green(title="手柄A按钮") A]
+				li.
+					#[b 降落] 或 #[b 坐下] 或 #[b 躺下] - 
+					#[kbd-key(title="X键") X] ,
+					#[kbd-key.gamepad.gamepad-dpad(title="手柄方向键下") #[.dpad-down]]
+					或 #[code /stand] 和 #[code /sit] 和 #[code /lie] 命令
+				li.
+					#[b 坐起] 或 #[b 站起] 或 #[b 飞起] - 
+					#[kbd-key(title="C键") C] ,
+					#[kbd-key.gamepad.gamepad-dpad(title="手柄方向键上") #[.dpad-up]]
+					或 #[code /sit] 和 #[code /stand] 和 #[code /fly] 命令
+				li.
+					#[b 转头] - 
+					#[kbd-key(title="H键") H]
+					或 #[kbd-key.gamepad.gamepad-stick(title="手柄右摇杆") R#[.t]#[.l]#[.r]#[.b]]
+					或 #[code /turn] 命令
+				li.
+					#[b 放大/缩小] -
+					#[kbd-key(title="P键") P] 和 #[kbd-key(title="O键") O]
+					或 #[kbd-key.gamepad.gamepad-yellow(title="手柄Y按钮") Y]
+				li.
+					#[b 隐藏所有文字] -
+					#[kbd-key(title="F2键") F2]
+				li.
+					#[b 隐藏公共聊天] -
+					#[kbd-key(title="F3键") F3]
+				li.
+					#[b 透视物体] -
+					#[kbd-key(title="F4键") F4]
+				li
+					| #[b 全屏] - 
+					span(*ngIf="!mac")
+						| #[kbd-key(title="F11键") F11]
+					span(*ngIf="mac")
+						| #[kbd-key(title="Control键") ctrl] + #[kbd-key(title="Command键") ⌘] + #[kbd-key(title="F键") F]
+
+		section
+			h2 表情
+			p 在游戏中更改小马的面部表情：
+
+			ul.spaced-list
+				li 在聊天中输入任何表情符号 <code>:)</code>
+				li 在消息末尾添加表情符号 <code>嘿 :D</code>
+				li 使用 <code>/:D</code> 命令<b>不说任何话</b>就改变表情
+				li 使用 <code>/e :(</code> 命令使表情永久化，使用 <code>/e</code> 恢复默认表情
+				li 使用水平和垂直表情：<code>&gt;:(</code> <code>D:</code> <code>O_o</code> <code>^c^</code> <code>6.9</code>
+				li 使用带脸红的表情，如 <code>O//O</code> 或 <code>O//v//O</code>
+
+		section
+			h2 聊天命令
+			p 游戏聊天中可使用以下命令：
+
+			ul.spaced-list
+				li <code>/help</code>、<code>/h</code> 或 <code>/?</code> - 列出所有可用命令
+				li
+					| <code>/roll</code>、<code>/rand</code> 或 <code>/random</code> - 掷出1到100之间的随机数
+					ul.spaced-list
+						li 使用 <code>/roll 10</code> 掷出1到10之间的随机数
+						li 使用 <code>/roll 5-10</code> 掷出5到10之间的随机数
+				li <code>/say</code> 或 <code>/s</code> - 公共聊天（可用于从队伍聊天切换）
+				li <code>/party</code> 或 <code>/p</code> - 队伍聊天
+				li <code>/think</code> 或 <code>/t</code> - 思考气泡
+				li <code>/whisper &lt;名字&gt;</code> 或 <code>/w &lt;名字&gt;</code> - 私聊玩家（也可以点击聊天记录中的玩家名字）
+				li <code>/reply</code> 或 <code>/r</code> - 回复最后收到的私聊
+				li <code>/e</code> - 设置永久表情，如 <code>/e :)</code>
+				li <code>/unstuck</code> - 重置位置到出生点并离开游戏
+				li <code>/leave</code> - 离开游戏
+				li <code>/turn</code> - 转头
+				li <code>/magic</code> - 切换魔法光芒
+				li <code>/drop</code> - 丢弃手持物品
+				li <code>/droptoy</code> - 丢弃手持玩具
+				li <code>/open</code> - 打开礼物
+				li <code>/toys</code> - 显示收集的玩具数量
+				li <code>/boop</code> 或 <code>/)</code> - 蹭蹭。也可以配合表情使用：<code>/) XD</code>
+				li <code>/lie</code> - 躺下或坐起
+				li <code>/sit</code> - 坐下或站起
+				li <code>/stand</code> - 站起或降落
+				li <code>/fly</code> - 飞起或降落
+				li <code>/sleep</code> 或 <code>/zzz</code> - 睡觉。也可以配合某些表情使用：<code>/zzz :)</code>
+				li <code>/love</code> 或 <code>/&lt;3</code> - 显示飘浮爱心。也可以配合表情使用：<code>/love :)</code>
+				li <code>/cry</code> - 开始哭泣。也可以配合表情使用：<code>/cry :D</code>
+				li <code>/blush</code> - 开始脸红。也可以配合表情使用：<code>/blush :D</code>
+				li.
+					以下表情命令可用：
+					<code>/smile</code> <code>/happy</code>
+					<code>/frown</code>
+					<code>/angry</code>
+					<code>/sad</code>
+					<code>/thinking</code>
+					<code>/yawn</code>
+					<code>/laugh</code> <code>/haha</code> <code>/хаха</code> <code>/jaja</code> <code>/lol</code>
+					<code>/sneeze</code> <code>/achoo</code>
+				li
+					strong 房屋保存
+					ul
+						li <code>/savehouse</code> - 保存当前房屋设置（整个账号只有一个存档）
+						li <code>/loadhouse</code> - 加载保存的房屋设置（需要独自在房屋中或是队长）
+						li <code>/resethouse</code> - 重置房屋到原始状态（需要独自在房屋中或是队长）
+						li <code>/lockhouse</code> - 阻止其他人修改房屋（需要独自在房屋中或是队长）
+						li <code>/unlockhouse</code> - 允许其他人编辑（需要独自在房屋中或是队长）
+						li <code>/removetoolbox</code> - 移除房屋中的工具箱（需要独自在房屋中或是队长）
+						li <code>/restoretoolbox</code> - 恢复房屋中的工具箱（需要独自在房屋中或是队长）
+
+		section
+			h4 仅限支持者的命令
+
+			ul.spaced-list
+				li <code>/ss</code> - 支持者彩色文字
+				li <code>/s1</code> - 一级支持者彩色文字（供更高级支持者使用）
+				li <code>/s2</code> - 二级支持者彩色文字（供更高级支持者使用）
+				li <code>/s3</code> - 三级支持者彩色文字（供更高级支持者使用）
+
+		section
+			h2 聊天表情
+			p.
+				你可以通过输入冒号包围的表情名称 #[samp :apple:]
+				或使用分配给它们的 Unicode 字符来在聊天中使用表情。可用表情：
+
+			.emotes
+				ul
+					li(*ngFor="let e of emotes")
+						span.emote-sample.mr-2
+							emote-box([emote]="e")
+						| :{{e}}:
+
+	.col-md-5
+		section
+			h2 常见问题
+
+			section
+				h4 使用 iPad 键盘时按键卡住
+				p.text-fading.
+					由于 iOS 系统的一个 bug，某些键偶尔会卡住，
+					当按键卡住时，只需再按一次即可解除。
+				p.text-fading.
+					我们建议你使用方向键移动，因为这些键不会卡住。
+
+			section
+				h4 其他玩家看不到我的消息
+				p.text-fading.
+					这种情况发生在你因违反规则而被临时禁言时。
+					通常需要几小时到几天，具体取决于违规的严重程度和频率。
+				p.text-fading.
+					遵守规则以防止将来再次发生这种情况。
+
+			section
+				h4 页面无法加载或更新卡住
+				p.text-fading.
+					尝试重新加载并清除浏览器数据。
+					如果仍然无效，请检查是否有扩展程序导致问题，
+					你可以通过使用浏览器的无痕模式来检查。
+
+			section
+				h4 在移动设备上安装游戏后，移动键盘遮挡聊天框
+				p.text-fading.
+					尝试重新安装游戏。
+
+			section
+				h4 加入游戏后屏幕黑屏或闪烁
+				p.text-fading.
+					这通常是由过时的显卡驱动或浏览器引起的。
+					检查你的浏览器是否是#[a(href="https://updatemybrowser.org/") 最新版本]，并检查
+					显卡或设备是否有新更新。
+				p.text-fading.
+					如果浏览器已经是最新版本，尝试安装其他浏览器。
+					我们推荐使用 #[a(href="https://www.google.com/chrome/") Chrome]
+					或 #[a(href="https://www.mozilla.org/en-US/firefox/new/") Firefox]。
+				p.text-fading.
+					一些较旧的设备不支持必要的功能，永远无法运行游戏。
+
+			section
+				h4 图形故障，物体消失
+				p.text-fading.
+					这可能是由过时的驱动程序或显存不足引起的，
+					请参阅前面的要点寻找可能的解决方案。
+
+			section
+				h4 无法连接到游戏
+				p.text-fading.
+					这可能是由过时的浏览器或网络问题引起的。
+					尝试更新浏览器或安装其他浏览器，请参阅前面的要点获取更多信息。
+				p.text-fading.
+					连接问题也可能是由我们的 DDOS 防护服务引起的，
+					重新加载页面并重试应该可以解决问题。
+
+			section
+				h4 游戏缓慢或卡顿
+				p.text-fading.
+					这可能是由过时的浏览器或某些浏览器扩展引起的。
+				p.text-fading.
+					#[b Chrome] 浏览器上的广告拦截扩展已知会导致游戏卡顿，
+					请确保禁用它以避免任何问题。其他类似的扩展也可能导致
+					游戏变慢和卡顿。
+				p.text-fading.
+					Firefox 已知有卡顿问题，我们推荐
+					使用 #[b Chrome] 或 #[b Edge] 浏览器以获得最佳性能。
+
+			section
+				h4 为什么我不能创建多个账号
+				p.text-fading.
+					此限制是为了保护你和游戏本身免受其他玩家的伤害。
+				p.text-fading.
+					允许单个人拥有多个账号会使忽略和隐藏系统失效，这些系统
+					允许你忽略和隐藏骚扰或打扰你的其他玩家。
+					它也会使禁言和封禁系统失效，这些系统是为了保护你免受违反
+					游戏规则骚扰他人的玩家的伤害。
+				p.text-fading.
+					同时使用多个账号会大幅增加服务器负载，可能使游戏对其他人
+					变得不可玩和卡顿。游戏中增加的玩家角色数量也会降低较慢电脑
+					上的渲染性能，特别是移动设备，以至于很多玩家将无法再玩这个游戏。
+				p.text-fading.
+					使用多个账号也会使我们设置的任何限制（如角色限制）失效。
+					这些限制是为了防止我们目前拥有的大量玩家耗尽我们有限的服务器资源。
+
+			section
+				h4 为什么我不能用外挂或脚本修改游戏
+				p.text-fading.
+					此限制是为了保护你和游戏本身免受其他玩家的伤害。
+				p.text-fading.
+					几乎所有游戏中使用的第三方脚本都被用来骚扰其他玩家。即使
+					脚本的创建者不打算让它被那样使用，对游戏的有限了解和
+					安全问题可能导致无意中创建对其他玩家有害的脚本。
+				p.text-fading.
+					即使脚本似乎不影响其他玩家，它通常会导致服务器或其他玩家
+					的性能问题。这迫使我们致力于对玩家互动设置更多限制，
+					并占用本可以用于为游戏添加新功能的开发时间。
+				p.text-fading.
+					对玩家互动设置更多限制也会使游戏对所有人（不仅仅是使用脚本的玩家）
+					响应更慢、更受限。这对网络连接不好的玩家尤其糟糕，
+					网络问题可能被误解释为使用脚本或刷屏。
+
+.text-center.text-muted.mt-3
+	.tinyface

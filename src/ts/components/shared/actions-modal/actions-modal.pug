@@ -1,0 +1,102 @@
+.modal-header.d-none.d-sm-block.d-none-for-low-height
+	h4.modal-title(labelledBy=".modal")
+		| 动作
+
+.modal-body.modal-checkboxes
+	tabset.fixed-height(
+		type="pills" saveActiveTab="testing-save-tab" [destroyOnHide]="false"
+		(activeIndexChange)="tabIndex = $event")
+		tab(title="动作" [icon]="actionsIcon")
+			.action-columns(*tabContent)
+				.d-flex.align-items-center.mb-2(*ngFor="let a of actions")
+					action-button.mb-0.mr-2([draggableItem]="a" [action]="a" [shadow]="false")
+					b {{a.title}}
+
+		tab(title="表情" [icon]="expressionsIcon")
+			div(*tabContent)
+				.d-flex.mb-3
+					action-button.mb-0.mr-sm-4(
+						[draggableItem]="emoteAction" [action]="emoteAction" [shadow]="false" (draggableDrop)="drop($event)")
+					.sub-tabset.nav.nav-pills.mb-0
+						button.btn-unstyled.nav-link([class.active]="activeTab === 'right-eye'" (click)="activeTab = 'right-eye'") 右眼
+						button.btn-unstyled.nav-link([class.active]="activeTab === 'left-eye'" (click)="activeTab = 'left-eye'") 左眼
+						button.btn-unstyled.nav-link([class.active]="activeTab === 'mouth'" (click)="activeTab = 'mouth'") 嘴巴
+						button.btn-unstyled.nav-link([class.active]="activeTab === 'extra'" (click)="activeTab = 'extra'") 其他
+				.fixed-height-tabset
+					div([class.inactive-tab]="activeTab !== 'right-eye'")
+						sprite-selection(
+							[(selected)]="eyeRight" [sprites]="eyesRight" [fill]="eyeColor"
+							[circle]="coatFill" [reverseExtra]="true" [skip]="1"
+							[invisible]="tabIndex !== 1 || activeTab !== 'right-eye'"
+							(selectedChange)="changed(lockEyes)")
+
+					div([class.inactive-tab]="activeTab !== 'left-eye'")
+						custom-checkbox.mb-2([(checked)]="lockEyes" (checkedChange)="changed($event)")
+							| 与右眼相同
+						sprite-selection(
+							[(selected)]="eyeLeft" [sprites]="eyesLeft" [fill]="eyeColor" [disabled]="lockEyes"
+							[circle]="coatFill" [reverseExtra]="true" [skip]="1"
+							[invisible]="tabIndex !== 1 || activeTab !== 'left-eye'"
+							(selectedChange)="changed(lockEyes)")
+
+					div([class.inactive-tab]="activeTab !== 'mouth'")
+						sprite-selection#expression-selection(
+							[(selected)]="muzzle" [sprites]="muzzles" [fill]="noseFills"
+							[outline]="noseOutlines" [circle]="coatFill"
+							[invisible]="tabIndex !== 1 || activeTab !== 'mouth'"
+							(selectedChange)="changed(lockEyes)")
+
+					div([class.inactive-tab]="activeTab !== 'extra'")
+						sprite-selection.mb-2(
+							[(selected)]="irisRight" [sprites]="irisesRight" [fill]="eyeColor"
+							[invisible]="tabIndex !== 1 || activeTab !== 'extra'"
+							[circle]="coatFill" [reverseExtra]="true" (selectedChange)="changed(lockEyes)")
+						custom-checkbox([(checked)]="lockIrises" (checkedChange)="changed(lockEyes)")
+							| 与右眼相同
+						sprite-selection.mt-2(
+							[(selected)]="irisLeft" [sprites]="irisesLeft" [fill]="eyeColor" [disabled]="lockIrises"
+							[invisible]="tabIndex !== 1 || activeTab !== 'extra'"
+							[circle]="coatFill" [reverseExtra]="true" (selectedChange)="changed(lockEyes)")
+						.d-flex.flex-wrap.mt-3
+							label.text-muted.mr-3 其他选项
+							custom-checkbox([(checked)]="blush" (checkedChange)="changed(lockEyes)") 脸红
+							custom-checkbox.ml-4([(checked)]="sleeping" (checkedChange)="changed(lockEyes)") 睡觉
+							custom-checkbox.ml-4([(checked)]="tears" (checkedChange)="changed(lockEyes)") 泪水
+							custom-checkbox.ml-4([(checked)]="crying" (checkedChange)="changed(lockEyes)") 哭泣
+							custom-checkbox.ml-4([(checked)]="hearts" (checkedChange)="changed(lockEyes)") 爱心
+
+		tab(title="聊天" [icon]="chatIcon")
+			.action-columns(*tabContent)
+				.d-flex.align-items-center.mb-2(*ngFor="let a of commands")
+					action-button.mb-0.mr-2([draggableItem]="a" [action]="a" [shadow]="false")
+					b {{a.title}}
+
+		tab(title="选项" [icon]="optionsIcon")
+			div(*tabContent)
+				button.btn.btn-outline-secondary.mr-2.mb-2((click)="resetToDefault()")
+					| 重置为默认动作
+				button.btn.btn-outline-secondary.mr-2.mb-2((click)="clearActionBar()")
+					| 清空动作栏
+				button.btn.btn-outline-secondary.mr-2.mb-2((click)="undo()")
+					| 撤销
+				button.btn.btn-outline-secondary.mr-2.mb-2((click)="export()")
+					| 导出动作
+				button.btn.btn-outline-secondary.mr-2.mb-2((click)="importFile.click()")
+					| 导入动作
+				input.d-none(#importFile type="file" (change)="import(importFile.files[0])")
+
+		tab(*ngIf="dev" title="开发" [icon]="devIcon")
+			div(*tabContent)
+				.d-flex.mb-3
+					action-button.mb-0.mr-4(
+						[draggableItem]="entityAction" [action]="entityAction" [shadow]="false" (draggableDrop)="drop($event)")
+					input.form-control(
+						placeholder="实体名称" [(ngModel)]="entityName" (ngModelChange)="updateEntity()" style="max-width: 200px;")
+				.d-flex.flex-wrap(style="height: 250px; overflow-y: scroll")
+					action-button(*ngFor="let a of entityActions" [draggableItem]="a" [action]="a")
+
+.modal-footer.d-flex
+	.flex-grow-1
+		em.text-muted 你可以拖动动作到动作栏使其固定
+	button.btn.btn-outline-secondary((click)="ok()")
+		| 关闭

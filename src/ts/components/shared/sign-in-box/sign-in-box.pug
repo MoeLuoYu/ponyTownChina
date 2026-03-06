@@ -1,0 +1,43 @@
+.sign-in-box.mx-auto.text-center
+	p.lead
+		| 使用社交账号登录
+
+	div(*ngIf="signUpProviders.length")
+		.sign-in-heading
+			span(aria-hidden="true") 登录 #[i 或] 注册
+
+		.sign-in-box-providers
+			button.btn.btn-lg.btn-dark(
+				*ngFor="let p of signUpProviders"
+				(click)="signInTo(p)"
+				[class.disabled]="p.disabled"
+				[style.border-bottom-color]="p.color"
+				title="使用 {{p.name}} 登录")
+				fa-icon([icon]="icon(p.id)" [fixedWidth]="true" size="lg")
+				.sr-only 使用 {{p.name}} 登录或注册
+
+	div(*ngIf="signInProviders.length")
+		.sign-in-heading
+			span(aria-hidden="true") 仅登录
+
+		.text-muted.mb-3 (这些社交站点 #[b 不能] 用于创建新账号)
+
+		.sign-in-box-providers.sign-in-only
+			button.btn.btn-lg.btn-dark(
+				*ngFor="let p of signInProviders"
+				(click)="signInTo(p)"
+				[class.disabled]="p.disabled"
+				[style.border-bottom-color]="p.color"
+				title="使用 {{p.name}} 登录")
+				fa-icon([icon]="icon(p.id)" [fixedWidth]="true" size="lg")
+				.sr-only 使用 {{p.name}} 登录
+
+	div(*ngIf="local")
+		.btn-group.dropdown(dropdown)
+			button.btn.btn-lg.btn-dark.dropdown-toggle(dropdownToggle)
+				| 模拟登录
+			.dropdown-menu(*dropdownMenu)
+				//- NOTE: change usernames to ids of accounts you want to use for testing
+				a.dropdown-item(href="/auth/local?password=x&username=57a3dc6f2f0019a161cdebf6" target="_self") 管理员
+				a.dropdown-item(href="/auth/local?password=x&username=57ae2332a67f4dc52e123e14" target="_self") 测试
+				a.dropdown-item(href="/auth/local?password=x&username=57ae2332a67f4dc52e123e15" target="_self") 其他

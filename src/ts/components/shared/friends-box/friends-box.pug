@@ -1,0 +1,55 @@
+.friends-box.dropdown(
+	dropdown autoClose="outsideClick" (isOpenChange)="toggle()" [hookToCanvas]="true" [focusOnOpen]="false"
+	[preventAutoCloseOnOutlet]="true")
+	button.game-button.dropdown-toggle.no-arrow(dropdownToggle (click)="false" title="好友")
+		fa-icon([icon]="friendsIcon" [fixedWidth]="true")
+	.friends-dropdown-menu.dropdown-menu.dropdown-menu-right(*dropdownMenu)
+		.friends-list-header.list-unstyled
+			.dropdown-header.d-flex
+				.flex-grow-1 好友
+				.dropdown(dropdown)
+					button.dropdown-toggle.no-arrow(dropdownToggle)
+						span.text-success(*ngIf="!hidden") 在线
+						span.text-muted(*ngIf="hidden") 离线
+						fa-icon.ml-2([icon]="cogIcon")
+					.dropdown-menu.dropdown-menu-right(*dropdownMenu)
+						button.dropdown-item((click)="setStatus('online')")
+							fa-icon.mr-2.text-success([icon]="statusIcon" size="xs" [fixedWidth]="true")
+							| 在线
+						button.dropdown-item((click)="setStatus('invisible')")
+							fa-icon.mr-2.text-muted([icon]="statusIcon" size="xs" [fixedWidth]="true")
+							| 隐身
+		.friends-list(*ngIf="friends && friends.length; else noFriends")
+			//- [itemSize]="42")
+			.friends-item(
+				dropdown
+				*ngFor="let f of friends"
+				[ngClass]="f.online ? 'online' : 'offline'"
+				[useOutlet]="true"
+				[hookToCanvas]="true"
+				[focusOnOpen]="false"
+				[focusOnClose]="false")
+				button.d-flex(dropdownToggle)
+					portrait-box.mr-2([pony]="f.ponyInfo" size="small" [noBorder]="true")
+					.flex-grow-1.friends-item-details
+						.friends-item-name {{f.actualName}}&#160;
+						.friends-item-more
+							.text-success.float-right.ml-2(*ngIf="f.online") 在线
+							.text-muted.float-right.ml-2(*ngIf="!f.online") 离线
+							.text-muted.friends-item-account {{f.accountName}}
+				.friends-item-delete.d-flex.px-2.py-1(*ngIf="removing === f")
+					button.btn.btn-sm.btn-outline-success.flex-grow-1((click)="cancelRemove(); $event.stopPropagation()")
+						| 取消
+					button.btn.btn-sm.btn-outline-danger.flex-grow-1.ml-2((click)="confirmRemove(); $event.stopPropagation()")
+						| 确认删除
+				//- span.badge.badge-none.friends-item-server PG
+				.options-dropdown-menu.dropdown-menu(*dropdownMenu)
+					button.dropdown-item((click)="sendMessageTo(f)" [disabled]="!f.online") 发送私聊
+					button.dropdown-item((click)="inviteToParty(f)" [disabled]="!f.online") 邀请加入队伍
+					.dropdown-divider
+					button.dropdown-item((click)="remove(f)") 删除
+		ng-template(#noFriends)
+			.text-center.text-muted.p-2(*ngIf="friends")
+				| 选择一个玩家并使用 #[fa-icon([icon]="userOptionsIcon")] 菜单将其添加到好友列表
+			.text-center.text-muted.p-2(*ngIf="!friends")
+				| 加载中...

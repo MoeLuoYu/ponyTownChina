@@ -1,0 +1,63 @@
+.pony-box(*ngIf="pony")
+	.pony-box-tags
+		.pony-box-tag(*ngIf="special" [ngClass]="specialClass")
+			| {{special}}
+		.pony-box-tag.tag-friend(*ngIf="isFriend(pony)")
+			| 好友
+	.pony-box-rect
+		.pony-box-name
+			| {{pony.name}}
+		.pony-box-buttons
+			site-info([site]="pony.site")
+
+		.pony-box-buttons-box
+			.btn-group.btn-group-shadow.dropdown(dropdown (isOpenChange)="removingFriend = false")
+				button.btn.btn-xs.dropdown-toggle(dropdownToggle [ngClass]="ignoredOrHidden ? 'btn-danger' : 'btn-default'")
+					fa-icon([icon]="cogIcon")
+
+				.dropdown-menu(*dropdownMenu)
+					button.dropdown-item((click)="toggleIgnore()")
+						fa-icon.mr-2([icon]="ignoreIcon" [fixedWidth]="true")
+						| {{isIgnored(pony) ? '取消忽略' : '忽略玩家'}}
+						fa-icon.ml-1(*ngIf="isIgnored(pony)" [icon]="checkIcon")
+					button.dropdown-item((click)="hidePlayer(1)")
+						fa-icon.mr-2([icon]="hideIcon" [fixedWidth]="true")
+						| 隐藏玩家 #[span.text-muted (24小时)]
+					button.dropdown-item((click)="hidePlayer(0)")
+						fa-icon.mr-2([icon]="hideIcon" [fixedWidth]="true")
+						| 隐藏玩家 #[span.text-muted (永久)]
+
+					.dropdown-divider
+					button.dropdown-item((click)="sendMessageTo()")
+						fa-icon.mr-2([icon]="messageIcon" [fixedWidth]="true")
+						| 发送私聊
+					button.dropdown-item(*ngIf="!isFriend(pony)" (click)="addFriend()")
+						fa-icon.mr-2.text-success([icon]="addFriendIcon" [fixedWidth]="true")
+						| 发送好友请求
+					div(*ngIf="isFriend(pony)" style="position: relative;")
+						button.dropdown-item((click)="removingFriend = true; $event.stopPropagation()")
+							fa-icon.mr-2.text-danger([icon]="removeFriendIcon" [fixedWidth]="true")
+							| 从好友列表移除
+						.remove-confirmation.px-2.d-flex.justify-content-center(*ngIf="removingFriend")
+							button.btn.btn-sm.btn-outline-success.flex-grow-1((click)="removingFriend = false; $event.stopPropagation()")
+								| 取消
+							button.btn.btn-sm.btn-outline-danger.flex-grow-1.ml-1((click)="removeFriend()")
+								| 确认删除
+
+					div(*ngIf="canInviteToSupporterServers")
+						h6.dropdown-header 支持者选项
+						button.dropdown-item((click)="inviteToSupporterServers()")
+							fa-icon.mr-2.text-success([icon]="starIcon" [fixedWidth]="true")
+							| 邀请至支持者服务器
+							fa-icon.ml-1(*ngIf="isInvitedToSupporterServers" [icon]="checkIcon")
+
+			.btn-group.btn-group-shadow(*ngIf="canInviteToParty || canRemoveFromParty || canPromoteToLeader")
+				button.btn.btn-xs.btn-default(*ngIf="canInviteToParty" (click)="inviteToParty()" tooltip="邀请加入队伍")
+					fa-icon([icon]="inviteIcon")
+				button.btn.btn-xs.btn-default(*ngIf="canRemoveFromParty" (click)="removeFromParty()" tooltip="移出队伍")
+					fa-icon([icon]="removeIcon")
+				button.btn.btn-xs.btn-default(*ngIf="canPromoteToLeader" (click)="promoteToLeader()" tooltip="设为队长")
+					fa-icon([icon]="leaderIcon")
+			mod-box(*ngIf="isMod" [pony]="pony")
+
+	portrait-box.pony-box-avatar([pony]="paletteInfo")

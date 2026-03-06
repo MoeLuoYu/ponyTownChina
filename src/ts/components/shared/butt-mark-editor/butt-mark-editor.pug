@@ -1,0 +1,20 @@
+.form-group.text-center
+	label#butt-mark-label.text-muted 可爱标记
+.row.form-group(role="group" aria-labelledby="butt-mark-label")
+	.col-sm-7.mb-1
+		button.btn.btn-primary((click)="clearCM()" title="清除全部")
+			fa-icon([icon]="trashIcon" [fixedWidth]="true")
+		.btn-group.ml-1(btnRadioGroup [(ngModel)]="state.brushType")
+			button.btn.btn-primary(btnRadio="eraser" title="橡皮擦")
+				fa-icon([icon]="eraserIcon" [fixedWidth]="true")
+			button.btn.btn-primary(btnRadio="eyedropper" title="吸管")
+				fa-icon([icon]="eyeDropperIcon" [fixedWidth]="true")
+			button.btn.btn-primary(btnRadio="brush" title="画笔")
+				fa-icon([icon]="paintBrushIcon" [fixedWidth]="true")
+	.col-sm-5.mb-1
+		color-picker([(color)]="state.brush" label="画笔颜色")
+.form-group.text-center
+	bitmap-box([bitmap]="info.cm" [tool]="state.brushType" [(color)]="state.brush" [width]="cmSize" [height]="cmSize")
+.form-group.d-flex.justify-content-center.align-items-center.text-muted
+	custom-checkbox([(checked)]="info.cmFlip")
+		| 右侧不翻转标记

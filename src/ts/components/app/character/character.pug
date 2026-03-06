@@ -1,0 +1,389 @@
+ng-template(#descriptionTooltip)
+	.text-left
+		p 描述和标签帮助你组织和搜索你的小马。
+		p 使用 # 标签可以快速找到特定的小马，如 #oc #winter 或 #unicorn
+		p
+			| 使用 @ 标签来排序你的小马。@top 将它们放在列表开头，@end 放在末尾，
+			| @1 @2 @3 ... 用于手动排序。
+
+page-loader(*ngIf="!playing")
+
+.row(*ngIf="!playing && !loading")
+	.col-lg-6.text-center
+		h1.sr-only(focusTitle) 角色
+		h2.sr-only 角色选择
+		.mx-auto(style="max-width: 400px;")
+			support-button.mb-3
+			install-button.mb-3
+			character-select(
+				[(error)]="error" [newButton]="true" [removeButton]="true" (change)="updateMuzzles()"
+				(preview)="previewPony = $event")
+
+			.character-preview-box.mx-auto.my-3((fixToTop)="fixed = $event" [fixToTopOffset]="-40")
+				character-preview(
+					#characterPreview [pony]="previewInfo" [state]="state" [noBackground]="true" [noShadow]="fixed"
+					[name]="previewName" [tag]="previewTag" [extra]="previewExtra" style="z-index: 100")
+
+			.form-group.text-center
+				button.btn.btn-lg.btn-default([disabled]="!canDuplicate" (click)="duplicate()" aria-label="复制角色")
+					| 复制
+				button.btn.btn-lg.btn-default.ml-2([disabled]="!canRevert" (click)="revert()" aria-label="撤销更改")
+					| 撤销
+				button.btn.btn-lg.btn-default.ml-2([disabled]="!canSave" (click)="save()" aria-label="保存角色")
+					| 保存
+
+			play-box(label="保存并游玩" [(error)]="error")
+			play-notice
+
+	.col-lg-6.character-tabs([setOutlineHidden]="!customOutlines" [class.character-tab-warning]="updateWarning")
+		h2.sr-only 角色自定义
+		tabset(type="pills" *ngIf="loaded" saveActiveTab="character-active-tab" label="Character customization")
+			tab(title="身体")
+				.character-tab(*tabContent)
+					div(*ngIf="account?.supporter")
+						.row.form-group
+							label.col-sm-4.col-form-label.text-patreon
+								| 支持者选项
+							.col-sm-8.text-muted.pt-2
+								custom-checkbox([(checked)]="pony.hideSupport") 隐藏支持者标签
+						hr.my-2
+
+					.row.form-group
+						label.col-sm-4.col-form-label 高级选项
+						.col-sm-8.text-muted.pt-1
+							custom-checkbox([(checked)]="pony.respawnAtSpawn")
+								| 总是在出生点重生
+							custom-checkbox([(checked)]="info.customOutlines")
+								| 允许自定义轮廓
+							custom-checkbox([(checked)]="info.freeOutlines" (checkedChange)="freeOutlinesChanged($event)")
+								| 不加深轮廓
+							custom-checkbox(
+								[(checked)]="info.darkenLockedOutlines" [disabled]="!info.freeOutlines"
+								(checkedChange)="darkenLockedOutlinesChanged($event)")
+								| 加深锁定轮廓
+
+					.row.form-group(*ngIf="debug")
+						label.col-sm-4.col-form-label 调试选项
+						.col-sm-8
+							button.btn.btn-sm.btn-default((click)="addBlush()") 添加脸红
+
+					.row.form-group
+						label.col-sm-4.col-form-label 导出/导入选项
+						.col-sm-8
+							button.btn.btn-sm.btn-default((click)="exportPony()") 导出小马
+							button.btn.btn-sm.btn-default.ml-1((click)="exportPonies()") 导出所有小马
+							button.btn.btn-sm.btn-default.ml-1((click)="importFile.click()") 导入小马
+							input.d-none(#importFile type="file" (change)="importPonies(importFile.files[0])")
+
+					.row.form-group
+						label#social-site-label.col-sm-4.col-form-label 显示社交站点
+						.col-sm-8
+							.dropdown.btn-group(dropdown)
+								button.btn.btn-default.dropdown-toggle(
+									dropdownToggle aria-labelledby="social-site-label" aria-describedby="social-site-help")
+									fa-icon.mr-1(
+										*ngIf="site?.icon" [icon]="icon(site.icon)" [fixedWidth]="true" [style.color]="site.color"
+										size="lg" [attr.aria-label]="site.icon")
+									strong {{site?.name}}
+								.dropdown-menu(*dropdownMenu)
+									a.dropdown-item(*ngFor="let s of sites" (click)="site = s")
+										fa-icon.mr-1(
+											*ngIf="s.icon" [icon]="icon(s.icon)" [fixedWidth]="true" [style.color]="s.color"
+											size="lg" [attr.aria-label]="s.icon")
+										strong {{s.name}}
+
+							.dropdown.btn-group.ml-1(dropdown *ngIf="tags.length > 1")
+								button.btn.btn-default.dropdown-toggle(dropdownToggle aria-label="显示标签")
+									span.badge(*ngIf="tag.id" [ngClass]="'badge-' + tag.className") {{tag.id}}
+									strong(*ngIf="!tag.id") {{tag.name}}
+								.dropdown-menu(*dropdownMenu)
+									a.dropdown-item(*ngFor="let t of tags" (click)="tag = t")
+										span.badge(*ngIf="t.id" [ngClass]="'badge-' + t.className") {{t.id}}
+										strong(*ngIf="!t.id") {{t.name}}
+
+							#social-site-help.text-muted.mt-1
+								| 在你的名字旁边显示社交站点，向他人证明这是你的账号。
+
+					.row.form-group
+						label.col-sm-4.col-form-label(for="description")
+							| 描述
+							fa-icon.text-muted.ml-2([icon]="infoIcon" [tooltip]="descriptionTooltip" containerClass="tooltip-desc")
+						.col-sm-8
+							input.form-control#description(
+								[(ngModel)]="pony.desc" placeholder="例如：戴着帽子 #oc #winter" [maxlength]="maxDescLength")
+
+					.row.form-group
+						.col-sm-4.col-lock-box
+							label(for="frame-input") 动画
+							check-box.lock-box([icon]="playIcon" [(checked)]="playAnimation" label="播放动画")
+						.col-sm-8
+							.input-group
+								input.form-control#frame-input(
+									type="number" [(ngModel)]="state.animationFrame" [disabled]="playAnimation" min="0"
+									title="动画帧" aria-label="动画帧")
+
+								.input-group-append.dropdown(*ngIf="canSaveFiles" dropdown)
+									button.btn.btn-default.dropdown-toggle(dropdownToggle *ngIf="canExport" aria-label="导出/导入")
+										fa-icon([icon]="codeIcon")
+									.dropdown-menu.dropdown-menu-right(*dropdownMenu)
+										a.dropdown-item((click)="export()") 导出全部
+										a.dropdown-item((click)="import()") 导入数据
+										a.dropdown-item((click)="testSize()") 打印压缩
+										a.dropdown-item((click)="testJSON()") 打印原始
+
+								.input-group-append.dropdown(dropdown)
+									button.btn.btn-default(
+										*ngIf="canSaveFiles" (click)="export(activeAnimation)" title="保存为PNG" aria-label="保存为PNG")
+										fa-icon([icon]="saveIcon")
+									button.btn.btn-default.dropdown-toggle(dropdownToggle style="min-width: 80px")
+										strong {{animations[activeAnimation]().name}}
+									.dropdown-menu.dropdown-menu-right(*dropdownMenu)
+										a.dropdown-item(*ngFor="let a of animations; let i = index" (click)="setActiveAnimation(i)")
+											| {{a().name}}
+
+					hr
+					fill-outline(
+						label="身体颜色" [(fill)]="info.coatFill" [(outline)]="info.coatOutline"
+						[(outlineLocked)]="info.lockCoatOutline" [outlineHidden]="!customOutlines" (change)="changed()")
+					hr
+					set-selection(
+						label="角" [base]="coatFill" [set]="info.horn" [sets]="horns" [compact]="true" (change)="changed()"
+						[darken]="darken")
+					hr
+					.row.form-group
+						label.col-sm-4.col-form-label 魔法颜色
+						.col-sm-8
+							color-picker([(color)]="info.magicColor" label="魔法颜色")
+					hr
+					set-selection(
+						label="翅膀" [base]="coatFill" [set]="info.wings" [sets]="wings" [compact]="true" (change)="changed()"
+						[darken]="darken")
+					hr
+					set-selection(
+						label="耳朵" [base]="coatFill" [set]="info.ears" [sets]="ears" [compact]="true" (change)="changed()"
+						[darken]="darken")
+					hr
+					set-selection(
+						label="前蹄" [base]="coatFill" [set]="info.frontHooves" [sets]="frontHooves" [compact]="true"
+						[darken]="darken" (change)="changed()")
+					hr
+					set-selection(
+						label="后蹄" [base]="hoovesFill" [set]="info.backHooves" [sets]="backHooves" [compact]="true"
+						[darken]="darken" (change)="changed()")
+					hr
+					butt-mark-editor([info]="info" [state]="buttMarkState")
+
+			tab(title="鬃毛")
+				.character-tab(*tabContent)
+					set-selection(
+						label="鬃毛" [base]="maneFill" [set]="info.mane" [sets]="manes" [nonLockable]="true"
+						[darken]="darken" (change)="changed()")
+					hr
+					set-selection(
+						label="后鬃毛" [base]="maneFill" [set]="info.backMane" [sets]="backManes"
+						[darken]="darken" (change)="changed()")
+
+			tab(title="尾巴")
+				.character-tab(*tabContent)
+					set-selection(
+						label="尾巴" [base]="maneFill" [set]="info.tail" [sets]="tails" [darken]="darken" (change)="changed()")
+					.form-group.text-center
+						button.btn.btn-sm.btn-default((click)="copyCoatColorToTail()" [disabled]="info.tail.lockFills[0]")
+							| 使用身体颜色
+
+			tab(title="面部")
+				.character-tab(*tabContent)
+
+					.row.form-group
+						.col-sm-4.col-lock-box
+							label#eye-color 眼睛颜色
+							check-box.lock-box(
+								[(checked)]="info.lockEyeColor" [icon]="lockIcon" (checkedChange)="eyeColorLockChanged($event)"
+								label="锁定双眼颜色" title="锁定双眼颜色")
+						.col-sm-8
+							color-picker([(color)]="info.eyeColorRight" (colorChange)="changed()" labelledBy="eye-color")
+					.row.form-group(*ngIf="!info.lockEyeColor")
+						label#eye-color-left.col-sm-4.col-form-label 眼睛颜色（左）
+						.col-sm-8
+							color-picker([(color)]="info.eyeColorLeft" labelledBy="eye-color-left")
+
+					.row.form-group
+						.col-sm-4.col-lock-box
+							label#eye-whites-label 眼白
+							check-box.lock-box(
+								[(checked)]="lockEyeWhites" [icon]="lockIcon" (checkedChange)="eyeWhiteLockChanged($event)"
+								label="锁定左眼眼白" title="锁定左眼眼白")
+						.col-sm-8
+							color-picker([(color)]="info.eyeWhites" (colorChange)="changed()" labelledBy="eye-whites-label")
+					.row.form-group(*ngIf="info.unlockEyeWhites")
+						label#eye-whites-label-left.col-sm-4.col-form-label 眼白（左）
+						.col-sm-8
+							color-picker([(color)]="info.eyeWhitesLeft" labelledBy="eye-whites-label-left")
+
+					.row.form-group
+						.col-sm-4.col-lock-box
+							label#eyes {{info.lockEyes ? '眼睛' : '右眼'}}
+							check-box.lock-box(
+								[(checked)]="info.lockEyes" [icon]="lockIcon" (checkedChange)="eyeOpennessChanged($event)"
+								label="锁定双眼" title="锁定双眼")
+						.col-sm-8
+							sprite-selection(
+								[(selected)]="info.eyeOpennessRight" [sprites]="eyesRight" [fill]="info.eyeColorRight"
+								[circle]="info.coatFill" [reverseExtra]="true" [skip]="1" [limit]="9" [darken]="darken"
+								(selectedChange)="eyeOpennessChanged(info.lockEyes)" aria-labelledby="eyes")
+					.row.form-group(*ngIf="!info.lockEyes")
+						.col-sm-4
+							label#left-eye 左眼
+						.col-sm-8
+							sprite-selection(
+								[(selected)]="info.eyeOpennessLeft" [sprites]="eyesLeft" [fill]="info.eyeColorLeft" [darken]="darken"
+								[circle]="info.coatFill" [reverseExtra]="true" [skip]="1" [limit]="5" aria-labelledby="left-eye")
+
+					.row.form-group
+						.col-sm-4.col-lock-box
+							label 眼影
+							check-box.lock-box(
+								[(checked)]="info.eyeshadow" (checkedChange)="characterPreview.blink()"
+								label="使用眼影" title="使用眼影")
+						.col-sm-8
+							color-picker([(color)]="info.eyeshadowColor" [isDisabled]="!info.eyeshadow" label="眼影颜色")
+
+					.row.form-group
+						label#eyelashes.col-sm-4.col-form-label 睫毛
+						.col-sm-8
+							sprite-selection(
+								[(selected)]="info.eyelashes" [sprites]="eyelashes" [fill]="info.eyeColorRight" [darken]="darken"
+								[circle]="info.coatFill" [reverseExtra]="true" aria-labelledby="eyelashes")
+
+					.row.form-group
+						.col-sm-4.col-lock-box
+							label#eyelashes-label 睫毛颜色
+							check-box.lock-box(
+								[(checked)]="lockEyelashColor" [icon]="lockIcon" (checkedChange)="eyelashLockChanged($event)"
+								label="锁定双眼睫毛颜色" title="锁定双眼睫毛颜色")
+						.col-sm-8
+							color-picker([(color)]="info.eyelashColor" (colorChange)="changed()" labelledBy="eyelashes-label")
+					.row.form-group(*ngIf="!lockEyelashColor")
+						label#eyelashes-label-left.col-sm-4.col-form-label 睫毛颜色（左）
+						.col-sm-8
+							color-picker([(color)]="info.eyelashColorLeft" labelledBy="eyelashes-label-left")
+
+					hr
+					set-selection(
+						label="口鼻" base="info.coatFill" [set]="info.nose" [sets]="noses" [darken]="darken"
+						[compact]="true" (change)="changed(); updateMuzzles()")
+					hr
+					set-selection(
+						label="花纹" [base]="coatFill" [set]="info.head" [sets]="heads" [darken]="darken"
+						[onlyPatterns]="true" (change)="changed()")
+					hr
+					.row.form-group
+						label#fangs.col-sm-4.col-form-label 獠牙
+						.col-sm-8
+							sprite-selection(
+								[(selected)]="info.fangs" [sprites]="fangs" [fill]="info.nose.fills" [darken]="darken"
+								[outline]="info.nose.outlines" [circle]="info.coatFill" aria-labelledby="fangs")
+					.row.form-group
+						label#expression.col-sm-4.col-form-label(for="#expression-selection") 表情
+						.col-sm-8
+							sprite-selection#expression-selection(
+								[(selected)]="info.muzzle" [sprites]="muzzles" [fill]="info.nose.fills" [darken]="darken"
+								[outline]="info.nose.outlines" [circle]="info.coatFill" [limit]="9" aria-labelledby="expression")
+					hr
+					set-selection(
+						label="面部毛发" [base]="maneFill" [set]="info.facialHair" [sets]="facialHair" [darken]="darken"
+						(change)="changed()")
+
+			tab(title="其他")
+				.character-tab(*tabContent)
+					tabset.accessories-tabset(saveActiveTab="character-active-accessory-tab" label="Character accessories")
+						tab(title="头部")
+							.accessory-tab(*tabContent)
+								set-selection(
+									label="头部配饰" [set]="info.headAccessory" [sets]="headAccessories" [darken]="darken"
+									[nonLockable]="true" (change)="changed()")
+								hr
+								set-selection(
+									label="耳朵配饰" [set]="info.earAccessory" [sets]="earAccessories" [darken]="darken"
+									[nonLockable]="true" (change)="changed()")
+								hr
+								set-selection(
+									label="面部配饰" [set]="info.faceAccessory" [sets]="faceAccessories" [darken]="darken"
+									[nonLockable]="true" (change)="changed()")
+
+						tab(title="颈部")
+							.accessory-tab(*tabContent)
+								set-selection(
+									label="颈部配饰" [set]="info.neckAccessory" [sets]="neckAccessories" [darken]="darken"
+									[nonLockable]="true" (change)="changed()")
+
+						tab(title="腿部")
+							.accessory-tab(*tabContent)
+								.row.form-group
+									label.col-sm-4.col-form-label 使用相同配饰
+									.col-sm-8.text-muted.pt-1
+										.mb-2
+											custom-checkbox([(checked)]="info.lockBackLegAccessory")
+												| 前后腿相同
+										.mb-2
+											custom-checkbox([(checked)]="lockFrontLegAccessory")
+												| 双前腿相同
+										.mb-2
+											custom-checkbox([(checked)]="lockBackLegAccessory" [disabled]="info.lockBackLegAccessory")
+												| 双后腿相同
+
+								set-selection(
+									[label]="info.lockFrontLegAccessories ? '前腿配饰' : '前腿配饰（左）'"
+									[set]="info.frontLegAccessory" [sets]="frontLegAccessories" [darken]="darken"
+									[nonLockable]="true" (change)="changed()")
+								hr
+								div(*ngIf="info.unlockFrontLegAccessory")
+									set-selection(
+										label="前腿配饰（右）"
+										[set]="info.frontLegAccessoryRight" [sets]="frontLegAccessories" [darken]="darken"
+										[nonLockable]="true" (change)="changed()")
+									hr
+								//- .form-group.d-flex.justify-content-center
+									custom-checkbox([(checked)]="info.lockBackLegAccessory") use the same accessory for back legs
+								div(*ngIf="!info.lockBackLegAccessory")
+									set-selection(
+										[label]="info.lockBackLegAccessories ? '后腿配饰' : '后腿配饰（左）'"
+										[set]="info.backLegAccessory" [sets]="backLegAccessories" [darken]="darken"
+										[nonLockable]="true" (change)="changed()")
+									hr
+								div(*ngIf="!info.lockBackLegAccessory && info.unlockBackLegAccessory")
+									set-selection(
+										label="后腿配饰（右）"
+										[set]="info.backLegAccessoryRight" [sets]="backLegAccessories" [darken]="darken"
+										[nonLockable]="true" (change)="changed()")
+
+						tab(title="胸部")
+							.accessory-tab(*tabContent)
+								set-selection(
+									label="胸部配饰" [set]="info.chestAccessory" [sets]="chestAccessories" [darken]="darken"
+									[nonLockable]="true" (change)="changed()")
+								set-selection(
+									*ngIf="hasSleeves(info.chestAccessory.type)" label="袖子" [set]="info.sleeveAccessory" [darken]="darken"
+									[sets]="sleeveAccessories" (change)="changed()")
+
+						tab(title="背部")
+							.accessory-tab(*tabContent)
+								set-selection(
+									label="背部配饰" [set]="info.backAccessory" [sets]="backAccessories" [darken]="darken"
+									[nonLockable]="true" (change)="changed()")
+
+						tab(title="腰部")
+							.accessory-tab(*tabContent)
+								set-selection(
+									label="腰部配饰" [set]="info.waistAccessory" [sets]="waistAccessories" [darken]="darken"
+									[nonLockable]="true" (change)="changed()")
+
+						tab(title="额外")
+							.accessory-tab(*tabContent)
+								.form-group.d-flex.justify-content-center.pt-2
+									custom-checkbox([(checked)]="previewExtra") 显示预览
+									em.text-muted.ml-2
+										| （你需要在游戏中启用这些配饰）
+								set-selection(
+									label="额外配饰" [set]="info.extraAccessory" [sets]="extraAccessories"
+									[darken]="darken" (change)="changed()")

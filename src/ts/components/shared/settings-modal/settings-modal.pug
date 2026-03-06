@@ -1,0 +1,137 @@
+.modal-header.d-none.d-sm-block.d-none-for-low-height
+	h4.modal-title(labelledBy=".modal")
+		| 设置
+
+.modal-body.modal-checkboxes
+	tabset(type="pills")
+		tab(title="游戏" [icon]="gameIcon")
+			div(*tabContent)
+				.form-group
+					custom-checkbox(
+						[(checked)]="account.ignorePartyInvites"
+						help="当其他玩家用不需要的队伍邀请打扰你时很有用（不适用于好友）")
+						| 忽略队伍邀请
+				.form-group
+					custom-checkbox(
+						[(checked)]="account.ignoreFriendInvites"
+						help="当其他玩家用不需要的好友请求打扰你时很有用")
+						| 忽略好友请求
+				.form-group
+					custom-checkbox(
+						[(checked)]="account.seeThroughObjects"
+						help="使所有障碍物透明")
+						| 透视障碍物
+				.form-group
+					custom-checkbox(
+						[(checked)]="browser.walkByDefault"
+						help="默认使用行走速度，按住 Shift 键跑步")
+						| 默认行走而非跑步
+
+		tab(title="图形" [icon]="graphicsIcon")
+			div(*tabContent)
+				.form-group
+					custom-checkbox(
+						*ngIf="!lockLowGraphicsMode" [(checked)]="browser.lowGraphicsMode"
+						help="在某些情况下可以提高游戏性能")
+						| 低画质模式
+					custom-checkbox(
+						*ngIf="lockLowGraphicsMode" [checked]="true" [disabled]="true"
+						help="在某些情况下可以提高游戏性能")
+						| 低画质模式
+				.form-group
+					custom-checkbox(
+						[(checked)]="browser.brightNight"
+						help="增加夜间和黑暗区域的亮度")
+						| 更亮的黑暗
+				.form-group
+					custom-checkbox(
+						[(checked)]="browser.powerSaving"
+						help="降低帧率以延长电池寿命并减少 CPU 过热")
+						| 省电模式
+				.form-group
+					custom-checkbox(
+						[(checked)]="browser.showStats"
+						help="显示渲染和网络统计信息")
+						| 显示统计信息
+				.form-group
+					custom-checkbox(
+						[(checked)]="browser.showFps"
+						help="显示 FPS 计数器")
+						| 显示 FPS
+
+		tab(title="聊天" [icon]="chatIcon")
+			div(*tabContent)
+				.form-group
+					custom-checkbox(
+						[(checked)]="account.ignorePublicChat"
+						help="不显示任何公共聊天消息，只显示队伍聊天和私聊")
+						| 隐藏所有公共聊天消息
+				.form-group
+					custom-checkbox(
+						[(checked)]="account.ignoreNonFriendWhispers"
+						help="不显示不在好友列表中的玩家的私聊")
+						| 只允许好友私聊
+				.form-group
+					label#chatlog-opacity-label 聊天记录背景透明度
+					div
+						slider-bar.mr-2(
+							[(value)]="account.chatlogOpacity" style="max-width: 300px" labelledBy="chatlog-opacity-label")
+						| {{(account.chatlogOpacity / 100) | percent}}
+					small.form-text.text-muted.mt-0 更改聊天记录背景，使其更易读或不那么突兀。
+				.form-group
+					label#chatlog-range-label 聊天记录范围
+					div
+						slider-bar.mr-2(
+							[(value)]="account.chatlogRange" [min]="minChatlogRange" [max]="maxChatlogRange" [step]="1"
+							(valueChange)="updateChatlogRange($event)" (changed)="finishChatlogRange()"
+							style="max-width: 300px" labelledBy="chatlog-range-label")
+						| {{chatlogRangeText}}
+					small.form-text.text-muted.mt-0
+						| 只显示附近玩家的消息（不影响队伍聊天或私聊）。
+
+		tab(title="过滤" [icon]="filtersIcon")
+			div(*tabContent)
+				.form-group
+					custom-checkbox(
+						[(checked)]="account.filterCyrillic"
+						help="隐藏所有包含俄语字母的消息")
+						| 过滤俄语聊天
+				.form-group
+					custom-checkbox(
+						[(checked)]="account.filterSwearWords"
+						help="审查聊天中的脏话和其他有害短语")
+						| 过滤不良词语
+				.form-group
+					label.mb-1 自定义聊天过滤
+					small.form-text.text-muted.mt-0.mb-2
+						| 用空格分隔要过滤的词语列表。
+						| 所有包含这些词语的聊天消息将被隐藏。
+						| 不影响队伍聊天或好友私聊。
+					textarea.form-control(rows="5" [(ngModel)]="account.filterWords")
+
+		tab(title="控制" [icon]="controlsIcon")
+			div(*tabContent)
+				.form-group
+					custom-checkbox(
+						[(checked)]="browser.disableGamepad"
+						help="如果手柄控制导致游戏问题，请使用此选项")
+						| 禁用手柄控制
+				.form-group
+					custom-checkbox(
+						[(checked)]="browser.disableFKeys"
+						help="如果你使用功能键的方式与游戏控制冲突，请使用此选项")
+						| 禁用功能键 (F1-F12)
+
+.modal-footer.d-flex
+	button.btn.btn-wide.btn-outline-secondary.d-none.d-sm-block((click)="reset()")
+		| 重置
+	button.btn.btn-outline-secondary.d-none.d-sm-block((click)="export()" title="导出设置")
+		fa-icon([icon]="exportIcon" [fixedWidth]="true")
+	button.btn.btn-outline-secondary.d-none.d-sm-block((click)="importFile.click()" title="导入设置")
+		fa-icon([icon]="importIcon" [fixedWidth]="true")
+		input.d-none(#importFile type="file" (change)="import(importFile.files[0])")
+	.flex-grow-1
+	button.btn.btn-wide.btn-outline-secondary((click)="cancel()")
+		| 取消
+	button.btn.btn-wide.btn-outline-secondary.ml-2((click)="ok()")
+		| 确定
