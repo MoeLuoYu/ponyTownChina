@@ -253,6 +253,17 @@ $argentina-blue: #74acdf;
 	margin-left: -16px;
 }
 
+.flag-cn {
+    background: #ed4c5c;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='25' height='25' viewBox='1 -1 20 20'%3E%3Cdefs%3E%3Cpath id='a' fill='%23ff0' d='M0-1 .588.809-.952-.309H.952L-.588.809z'/%3E%3C/defs%3E%3Cuse xlink:href='%23a' transform='matrix(3 0 0 3 5 5)'/%3E%3Cuse xlink:href='%23a' transform='rotate(23.036 .093 25.536)'/%3E%3Cuse xlink:href='%23a' transform='rotate(45.87 1.273 16.18)'/%3E%3Cuse xlink:href='%23a' transform='rotate(69.945 .996 12.078)'/%3E%3Cuse xlink:href='%23a' transform='rotate(20.66 -19.689 31.932)'/%3E%3C/svg%3E");
+    position: relative
+}
+
+.flag-hk {
+    background: #e72c21;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='25' height='25' viewBox='-265 -266 700 700' fill='%23e72c21'%3E%3Cdefs%3E%3Cg id='d' transform='scale(15.80987)'%3E%3Cg id='b'%3E%3Cpath id='a' d='M0 0v1h.5z' transform='rotate(18 3.157 -.5)'/%3E%3Cuse xlink:href='%23a' transform='scale(-1 1)'/%3E%3C/g%3E%3Cg id='c'%3E%3Cuse xlink:href='%23b' transform='rotate(72)'/%3E%3Cuse xlink:href='%23b' transform='rotate(216)'/%3E%3C/g%3E%3Cuse xlink:href='%23c' transform='rotate(72)'/%3E%3C/g%3E%3C/defs%3E%3Cg id='e'%3E%3Cpath d='M43.546-174.653a27.917 27.917 0 0 0-15.047 41.74A45.171 45.171 0 0 1 7.978-66.782 38.65 38.65 0 0 0-3.063-2.506a68.375 68.375 0 0 1-16.74-93.972 15.81 15.81 0 0 1-1.106-1.052A69.88 69.88 0 0 0-4.489-1.679a90.342 90.342 0 0 1 48.035-172.974' fill='%23fff'/%3E%3Cuse xlink:href='%23d' transform='rotate(48.637 115.251 -64.702)'/%3E%3C/g%3E%3Cg id='f'%3E%3Cuse xlink:href='%23e' transform='rotate(72)'/%3E%3Cuse xlink:href='%23e' transform='rotate(216)'/%3E%3C/g%3E%3Cuse xlink:href='%23f' transform='rotate(72)'/%3E%3C/svg%3E");
+    position: relative
+}
 .modal-frame {
 	width: 100%;
 	height: 500px;
