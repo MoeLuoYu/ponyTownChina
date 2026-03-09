@@ -30,26 +30,26 @@ import { ButtMarkEditorState } from '../../shared/butt-mark-editor/butt-mark-edi
 import { parseColorWithAlpha } from '../../../common/color';
 import { saveAs } from 'file-saver';
 
-const frontHoofTitles = ['', 'Fetlocks', 'Paws', 'Claws', ''];
-const backHoofTitles = ['', 'Fetlocks', 'Paws', '', ''];
+const frontHoofTitles = ['', '距毛', '爪垫', '利爪', ''];
+const backHoofTitles = ['', '距毛', '爪垫', '', ''];
 
 const horns = addLabels(sprites.horns, [
-	'None', 'Unicorn horn', 'Short unicorn horn', 'Curved unicorn horn', 'Tiny deer antlers',
-	'Short deer antlers', 'Medium deer antlers', 'Large deer antlers', 'Raindeer antlers', 'Goat horns',
-	'Ram horns', 'Buffalo horns', 'Moose horns', 'Bug antenna', 'Long unicorn horn',
+	'无', '独角兽角', '短独角兽角', '弯独角兽角', '小鹿角',
+	'短鹿角', '中鹿角', '大鹿角', '驯鹿角', '山羊角',
+	'公羊角', '水牛角', '驼鹿角', '虫触角', '长独角兽角',
 ]);
 
 const wings = addLabels(sprites.wings[0]!, [
-	'None', 'Pegasus wings', 'Bat wings', 'Gryphon wings', 'Bug wings'
+	'无', '飞马翼', '蝙蝠翼', '狮鹫翼', '虫翼'
 ]);
 
 const ears = addLabels(sprites.ears, [
-	'Regular ears', 'Fluffy ears', 'Long feathered ears', 'Bug ears', 'Short feathered ears', 'Deer ears',
+	'普通耳朵', '蓬松耳朵', '长羽耳', '虫耳', '短羽耳', '鹿耳',
 ]);
 
-const noses = addTitles(sprites.noses[0], ['Pony muzzle', 'Gryphon beak', 'Deer nose']);
+const noses = addTitles(sprites.noses[0], ['小马鼻子', '狮鹫喙', '鹿鼻']);
 
-const flyAnimations = [{ ...stand, name: 'fly' }, fly, fly, fly, { ...flyBug, name: 'fly' }];
+const flyAnimations = [{ ...stand, name: '飞行' }, fly, fly, fly, { ...flyBug, name: '飞行' }];
 
 function eyeSprite(e: PonyEye | undefined) {
 	return createEyeSprite(e, 0, sprites.defaultPalette);
