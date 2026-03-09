@@ -28,7 +28,7 @@ ng-template(#actionsModal)
 				slider-bar([(value)]="volume" [step]="1" (started)="volumeStarted()")
 				.text-muted.text-right(*ngIf="track" style="margin-top: -5px;")
 					small
-						| 正在游玩: #[b {{track}}]
+						| 正在播放: #[b {{track}}]
 						a.text-muted.ml-1((click)="nextTrack()" title="Next track")
 							fa-icon([icon]="forwardIcon" [fixedWidth]="true")
 			a.dropdown-item((click)="unhideAllHiddenPlayers()")
