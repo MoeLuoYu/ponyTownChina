@@ -4,7 +4,9 @@ Translated by MoeLuoYu
 一些内容并没有翻译完整，翻译尽可能优先考虑前端显示内容
 
 > [!IMPORTANT]
->**注意：由于PonyTow早年间一些原因闭源了项目并删除了仓库，此版本为最后开源版本，已与 [pony.town](https://pony.town/) 现版本相差数十甚至上百个版本，如您没有维护能力，请不要下载部署**
+>**注意：由于PonyTow早年间一些原因闭源了项目并删除了仓库，此版本为最后开源版本，已与 [pony.town](https://pony.town/) 现版本相差数百个版本，如您没有维护能力，请不要下载部署**
+
+**官方完整体验请前往 [https://pony.town](https://pony.town/)**
 
 ## 前置要求  
 * [Node.js](https://nodejs.org/download/release/v9.11.2/) (版本9)  
